@@ -72,3 +72,23 @@ table {
 	border-bottom-width:1px;
 	margin-bottom:20px;
 }
+
+.mapColor0 {
+	fill: #FFEBEE;
+}
+
+.mapColor1 {
+	fill: #FFCDD2;
+}
+
+.mapColor2 {
+	fill: #E57373;
+}
+
+.mapColor3 {
+	fill: #F44336;
+}
+
+.mapColor4 {
+	fill: #d70206;
+}

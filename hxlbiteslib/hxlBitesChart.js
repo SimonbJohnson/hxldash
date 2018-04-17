@@ -135,7 +135,7 @@ hxlBites._chartBites = [
 'id':'chart0013',
 'type':'chart',
 'subType':'row',
-'ingredients':[{'name':'who','tags':['#org-id-code']},{'name':'value','tags':['#value','#reached']}],
+'ingredients':[{'name':'who','tags':['#org-id-code']},{'name':'value','tags':['#value','#reached','#indicator+value']}],
 'criteria':['who > 10'],
 'variables': ['who', 'sum(value)'],
 'chart':'rows(10)',
@@ -172,7 +172,7 @@ hxlBites._chartBites = [
 'criteria':['what > 1', 'what < 5'],
 'variables': ['what', 'count()'],
 'chart':'',
-'title':'{1} by counta',
+'title':'{1} by count',
 'priority': 8,
 },
 {
@@ -184,6 +184,17 @@ hxlBites._chartBites = [
 'variables': ['indicator', 'count()'],
 'chart':'',
 'title':'Count of {1}',
+'priority': 8,
+},
+{
+'id':'chart0018',
+'type':'chart',
+'subType':'row',
+'ingredients':[{'name':'where','tags':['#country-code','#region-code','#adm1-code','#adm2-code','#adm3-code','#adm4-code','#loc-code']},{'name':'value','tags':['#value','#reached','#indicator+value']}],
+'criteria':['where > 10'],
+'variables': ['where', 'sum(value)'],
+'chart':'rows(10)',
+'title':'Top 10 of {1} by {2}',
 'priority': 8,
 }
 ];

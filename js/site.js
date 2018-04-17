@@ -71,6 +71,9 @@ function createDashboard(dataSets,config){
         if(bite.type=='crosstable'){
             createCrossTable(id,bite);
         }
+        if(bite.type=='map'){
+            createMap(id,bite);
+        }        
     });
 }
 
@@ -90,7 +93,7 @@ function createChart(id,bite){
         
     })
     $(id).html(bite.title);
-    console.log(bite);
+
     if(bite.subtype=="row"){
         new Chartist.Bar(id, {
             labels: labels,
@@ -111,14 +114,14 @@ function createChart(id,bite){
 
         var options = {
           labelInterpolationFnc: function(value) {
-            return value[0]
+            return value[6]
           }
         };
 
         var responsiveOptions = [
           ['screen and (min-width: 640px)', {
-            chartPadding: 30,
-            labelOffset: 100,
+            chartPadding: 40,
+            labelOffset: 80,
             labelDirection: 'explode',
             labelInterpolationFnc: function(value) {
               return value;
@@ -126,13 +129,66 @@ function createChart(id,bite){
           }],
           ['screen and (min-width: 1024px)', {
             labelOffset: 80,
-            chartPadding: 20
+            chartPadding: 40
           }]
         ];
 
         new Chartist.Pie(id, data, options, responsiveOptions);        
+    }    
+}
+
+function createMap(id,bite){
+
+    id = id.substring(1);
+
+    var map = L.map(id, { fadeAnimation: false }).setView([0, 0], 2);
+
+    var maxValue = bite.bite[1][1];
+    var minValue = bite.bite[1][1];
+
+    bite.bite.forEach(function(d){
+        if(d[1]>maxValue){
+            maxValue = d[1];
+        }
+        if(d[1]<minValue){
+            minValue = d[1];
+        }
+    });
+
+    L.tileLayer.grayscale('http://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: 'Map data &copy; <a href="http://openstreetmap.org/">OpenStreetMap</a> contributors',
+        maxZoom: 14, minZoom: 2
+    }).addTo(map);
+
+    $.ajax({
+        url: bite.geom_url,
+        success: function(result){
+            var geom = topojson.feature(result,result.objects.geom);
+            L.geoJson(geom, {style: style}).addTo(map);
+        }
+    });
+
+    function style(feature) {
+        return {
+            className: getClass(feature.properties[bite.geom_attribute]),
+            weight: 1,
+            opacity: 1,
+            color: '#cccccc',
+            dashArray: '3',
+            fillOpacity: 0.7
+        };
     }
-    
+
+    function getClass(id){
+        var value = 0;
+        bite.bite.forEach(function(d){
+            if(d[0]==id){
+                value=d[1];
+            }
+        });
+        return 'mapcolor'+Math.ceil((value-minValue)/(maxValue-minValue)*4);
+    }        
+
 }
 
 init();

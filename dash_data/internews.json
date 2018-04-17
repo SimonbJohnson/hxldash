@@ -1,0 +1,15 @@
+{
+	"title":"Internews",
+	"subtext":"This is the list of feedback received by the Internews Humanitarian Information System In the Protection of Civilians Camps in South Sudan.  Data available at <a href='https://data.humdata.org/dataset/humanitarian-feedback-south-sudan-sept-2015-sept-2016'>Humanitarian Data Exchange</a>.  Presented here is a breakdown of the feedback, by location, the status of the feedback being actioned and what sector the feedback belonged to.",
+	"grid":"grid3",
+	"charts":[
+		{"data":"https://docs.google.com/spreadsheets/d/1lH4KPEGMpEAaYtEAMU-UddBXcqX5usMQzT8u-BMJ2PY/edit#gid=0",
+		"chartID":"cross0001/#loc/0/#status/7"},
+		{"data":"https://docs.google.com/spreadsheets/d/1lH4KPEGMpEAaYtEAMU-UddBXcqX5usMQzT8u-BMJ2PY/edit#gid=0",
+		"chartID":"chart0005/#loc/0"},
+		{"data":"https://docs.google.com/spreadsheets/d/1lH4KPEGMpEAaYtEAMU-UddBXcqX5usMQzT8u-BMJ2PY/edit#gid=0",
+		"chartID":"chart0011/#status/7"},
+		{"data":"https://docs.google.com/spreadsheets/d/1lH4KPEGMpEAaYtEAMU-UddBXcqX5usMQzT8u-BMJ2PY/edit#gid=0",
+		"chartID":"chart0010/#sector/3"}
+	]
+}

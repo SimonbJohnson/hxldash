@@ -1,0 +1,15 @@
+{
+	"title":"Red Cross responses",
+	"subtext":"A summary of Red Cross responses from 1919 to current day.  <a href='https://docs.google.com/spreadsheets/d/19pBx2NpbgcLFeWoJGdCqECT2kw9O9_WmcZ3O41Sj4hU/edit#gid=0'>Data source</a>",
+	"grid":"grid4",
+	"charts":[
+		{"data":"https://docs.google.com/spreadsheets/d/19pBx2NpbgcLFeWoJGdCqECT2kw9O9_WmcZ3O41Sj4hU/edit#gid=0",
+		"chartID":"chart0014/#crisis+type/10"},
+		{"data":"https://docs.google.com/spreadsheets/d/19pBx2NpbgcLFeWoJGdCqECT2kw9O9_WmcZ3O41Sj4hU/edit#gid=0",
+		"chartID":"chart0005/#region+name/5"},
+		{"data":"https://docs.google.com/spreadsheets/d/19pBx2NpbgcLFeWoJGdCqECT2kw9O9_WmcZ3O41Sj4hU/edit#gid=0",
+		"chartID":"chart0011/#severity/7"},
+		{"data":"https://docs.google.com/spreadsheets/d/19pBx2NpbgcLFeWoJGdCqECT2kw9O9_WmcZ3O41Sj4hU/edit#gid=0",
+		"chartID":"chart0011/#status/6"}
+	]
+}

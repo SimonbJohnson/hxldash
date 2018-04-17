@@ -1,0 +1,15 @@
+{
+	"title":"Red Cross 2018 responses",
+	"subtext":"A summary of Red Cross responses for 2018.  <a href='https://docs.google.com/spreadsheets/d/19pBx2NpbgcLFeWoJGdCqECT2kw9O9_WmcZ3O41Sj4hU/edit#gid=0'>Data source</a>",
+	"grid":"grid4",
+	"charts":[
+		{"data":"https://proxy.hxlstandard.org/data.json?filter01=select&select-query01-01=%23date%2Bstart%3E2017-12-31&url=https%3A%2F%2Fdocs.google.com%2Fspreadsheets%2Fd%2F19pBx2NpbgcLFeWoJGdCqECT2kw9O9_WmcZ3O41Sj4hU%2Fedit%23gid%3D0",
+		"chartID":"chart0014/#crisis+type/10"},
+		{"data":"https://proxy.hxlstandard.org/data.json?filter01=select&select-query01-01=%23date%2Bstart%3E2017-12-31&url=https%3A%2F%2Fdocs.google.com%2Fspreadsheets%2Fd%2F19pBx2NpbgcLFeWoJGdCqECT2kw9O9_WmcZ3O41Sj4hU%2Fedit%23gid%3D0",
+		"chartID":"chart0005/#region+name/5"},
+		{"data":"https://proxy.hxlstandard.org/data.json?filter01=select&select-query01-01=%23date%2Bstart%3E2017-12-31&url=https%3A%2F%2Fdocs.google.com%2Fspreadsheets%2Fd%2F19pBx2NpbgcLFeWoJGdCqECT2kw9O9_WmcZ3O41Sj4hU%2Fedit%23gid%3D0",
+		"chartID":"chart0017/#severity/7"},
+		{"data":"https://proxy.hxlstandard.org/data.json?filter01=select&select-query01-01=%23date%2Bstart%3E2017-12-31&url=https%3A%2F%2Fdocs.google.com%2Fspreadsheets%2Fd%2F19pBx2NpbgcLFeWoJGdCqECT2kw9O9_WmcZ3O41Sj4hU%2Fedit%23gid%3D0",
+		"chartID":"chart0017/#status/6"}
+	]
+}

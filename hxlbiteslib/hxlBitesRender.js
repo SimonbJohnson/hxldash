@@ -61,8 +61,9 @@ hxlBites.render = function(_id,_bite){
 		html += '</tr></tbody></table>';
 		return html;
 	}
-
-	_id = _id.substring(1);
+	if(_id!=null){
+		_id = _id.substring(1);
+	}
 	if(_bite.type == 'table'){
 		if(_id == null){
 			return _tableToHTML(_bite.bite);

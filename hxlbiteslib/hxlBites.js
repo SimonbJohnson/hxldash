@@ -148,7 +148,7 @@ let hxlBites = {
 			});
 			let matchingValues = self._checkCriteria(bite.criteria,distinctOptions);
 			if(matchingValues !== false){
-				let tag = bite.ingredients[0].tags[0];
+				let tag = matchingValues.where[0].tag;
 				let location = null;
 				let level = -1;
 				if(tag=='#country+code'){
@@ -157,12 +157,19 @@ let hxlBites = {
 				if(tag=='#adm1+code'){
 					level = 1;
 				}
+				if(tag=='#adm2+code'){
+					level = 2;
+				}
+				if(tag=='#adm3+code'){
+					level = 3;
+				}							
 				if(level>-1){
 					//let titleVariables = self._getTitleVariables(bite.variables,matchingValues);				
 					//let titles = self._generateTextBite(bite.title,titleVariables);
 					let keyVariable = bite.variables[0]
 					let values = matchingValues[keyVariable][0].values;
 					let mapCheck = self._checkMapCodes(level,values);
+					console.log(mapCheck);
 					if(mapCheck.percent>0.5){
 						let variables = self._getTableVariablesWithMatching(self._data,bite,matchingValues);
 						let newBites = self._generateMapBite(bite.map,variables,location,level);

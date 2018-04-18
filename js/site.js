@@ -85,13 +85,24 @@ function createCrossTable(id,bite){
 function createChart(id,bite){
     var labels = [];
     var series = [];
+    maxLength = 0;
     bite.bite.forEach(function(d,i){
         if(i>0){
-            labels.push(d[0]);
+            var label = d[0];
+            if(label.length>maxLength){
+                maxLength = label.length;
+            }
+            if(label.length>40){
+                label = label.substring(0,35)+'...'
+            }
+            labels.push(label);
             series.push(d[1]);
-        }
-        
+        }  
     })
+    var offset = 70;
+    if(maxLength>30){
+        offset = 120
+    }
     $(id).html(bite.title);
 
     if(bite.subtype=="row"){
@@ -103,7 +114,7 @@ function createChart(id,bite){
           reverseData: true,
           horizontalBars: true,
           axisY: {
-            offset: 70
+            offset: offset
           }
         });        
     } else {
@@ -164,7 +175,8 @@ function createMap(id,bite){
         url: bite.geom_url,
         success: function(result){
             var geom = topojson.feature(result,result.objects.geom);
-            L.geoJson(geom, {style: style}).addTo(map);
+            var layer = L.geoJson(geom, {style: style}).addTo(map);
+            map.fitBounds(layer.getBounds());
         }
     });
 

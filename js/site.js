@@ -62,6 +62,7 @@ function createDashboard(dataSets,config){
 
 
     config.charts.forEach(function(chart,i){
+        console.log(chart);
         var bite = hxlBites.data(dataSets[chart.data]).reverse(chart.chartID);
         console.log(bite);
         var id = '#chart' + i;
@@ -152,7 +153,9 @@ function createMap(id,bite){
 
     id = id.substring(1);
 
-    var map = L.map(id, { fadeAnimation: false }).setView([0, 0], 2);
+    $('#'+id).html(bite.title+'<div id="'+id+'map" class="map"></div>');
+
+    var map = L.map(id+'map', { fadeAnimation: false }).setView([0, 0], 2);
 
     var maxValue = bite.bite[1][1];
     var minValue = bite.bite[1][1];
@@ -171,11 +174,39 @@ function createMap(id,bite){
         maxZoom: 14, minZoom: 2
     }).addTo(map);
 
+    var info = L.control();
+
+    info.onAdd = function (map) {
+        this._div = L.DomUtil.create('div', 'info'); // create a div with a class "info"
+        this.update();
+        return this._div;
+    };
+
+    // method that we will use to update the control based on feature properties passed
+    info.update = function (id) {
+        value = 0;
+        bite.bite.forEach(function(d){
+                    if(d[0]==id){
+                        value=d[1];
+                    }
+                }); 
+                               
+        this._div.innerHTML = (id ?
+            '<b>Value:</b> ' + value
+            : 'Hover for value');
+    };
+
+    info.addTo(map);    
+
     $.ajax({
         url: bite.geom_url,
         success: function(result){
             var geom = topojson.feature(result,result.objects.geom);
-            var layer = L.geoJson(geom, {style: style}).addTo(map);
+            var layer = L.geoJson(geom,
+                {
+                    style: style,
+                    onEachFeature: onEachFeature
+                }).addTo(map);
             map.fitBounds(layer.getBounds());
         }
     });
@@ -190,6 +221,21 @@ function createMap(id,bite){
             fillOpacity: 0.7
         };
     }
+
+    function onEachFeature(feature, layer) {
+        layer.on({
+            mouseover: highlightFeature,
+            mouseout: resetHighlight,
+        });
+    }
+
+    function highlightFeature(e) {
+        info.update(e.target.feature.properties[bite.geom_attribute]);
+    }
+
+    function resetHighlight(e) {
+        info.update();
+    }    
 
     function getClass(id){
         var value = 0;

@@ -1,0 +1,11 @@
+{
+	"title":"British Red Cross Themes - Protracted Conflicts",
+	"subtext":"A map of the British Red Cross Prioritisation of the strategic theme Protracted Conflicts and list of top 10 countries.  <a href='https://docs.google.com/spreadsheets/d/1uvmwMNQeUrydKOYfb4asKAzsZCe24DWGY6w0yRN7n3c/edit#gid=2092332121'>Data source</a>.",
+	"grid":"grid5",
+	"charts":[
+		{"data":"https://docs.google.com/spreadsheets/d/1uvmwMNQeUrydKOYfb4asKAzsZCe24DWGY6w0yRN7n3c/edit#gid=1044871988",
+		"chartID":"map0002/#country+code/1/#indicator+current+value/3"},
+		{"data":"https://docs.google.com/spreadsheets/d/1uvmwMNQeUrydKOYfb4asKAzsZCe24DWGY6w0yRN7n3c/edit#gid=1044871988",
+		"chartID":"chart0018/#country+name/0/#indicator+current+value/3"}
+	]
+}

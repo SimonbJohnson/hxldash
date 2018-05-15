@@ -4,8 +4,8 @@
 	"grid":"grid5",
 	"charts":[
 		{"data":"https://docs.google.com/spreadsheets/d/1uvmwMNQeUrydKOYfb4asKAzsZCe24DWGY6w0yRN7n3c/edit#gid=1592489096",
-		"chartID":"map0002/#country+code/1/#indicator+globalhungerindex+value/5"},
+		"chartID":"map0002/#country+code/1/#indicator+value/7"},
 		{"data":"https://docs.google.com/spreadsheets/d/1uvmwMNQeUrydKOYfb4asKAzsZCe24DWGY6w0yRN7n3c/edit#gid=1592489096",
-		"chartID":"chart0018/#country+name/0/#indicator+globalhungerindex+value/5"}
+		"chartID":"chart0018/#country+name/0/#indicator+value/7"}
 	]
 }

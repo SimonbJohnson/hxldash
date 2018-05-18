@@ -1,0 +1,11 @@
+{
+	"title":"British Red Cross Themes - Migration",
+	"subtext":"A map of the British Red Cross Prioritisation of the strategic theme migration and list of top 10 countries.  <a href='https://docs.google.com/spreadsheets/d/1uvmwMNQeUrydKOYfb4asKAzsZCe24DWGY6w0yRN7n3c/edit#gid=2092332121'>Data source</a>.",
+	"grid":"grid5",
+	"charts":[
+		{"data":"https://docs.google.com/spreadsheets/d/1uvmwMNQeUrydKOYfb4asKAzsZCe24DWGY6w0yRN7n3c/edit#gid=51384602",
+		"chartID":"map0002/#country+code/1/#indicator+value/16"},
+		{"data":"https://docs.google.com/spreadsheets/d/1uvmwMNQeUrydKOYfb4asKAzsZCe24DWGY6w0yRN7n3c/edit#gid=51384602",
+		"chartID":"chart0018/#country+name/0/#indicator+value/16"}
+	]
+}

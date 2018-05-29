@@ -53,6 +53,7 @@ function loadGrid(config){
 }
 
 function createDashboard(dataSets,config){
+    console.log($(window).height());
     var height = $(window).height()- 100
     $('.whole').height(height);
     $('.half').height(height/2);

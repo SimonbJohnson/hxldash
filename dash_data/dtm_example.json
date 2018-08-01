@@ -4,8 +4,8 @@
 	"grid":"grid5",
 	"charts":[
 		{"data":"https://beta.proxy.hxlstandard.org/data/1d0a79/download/africa-dtm-baseline-assessments-topline.csv",
-		"chartID":"map0001/#country+code/2"},
+		"chartID":"map0002/#country+code/2/#population+idps+ind/6"},
 		{"data":"https://beta.proxy.hxlstandard.org/data/1d0a79/download/africa-dtm-baseline-assessments-topline.csv",
-		"chartID":"chart0005/#country+name/1"}
+		"chartID":"chart0018/#adm1+name/3/#population+hh+idps/5"}
 	]
 }

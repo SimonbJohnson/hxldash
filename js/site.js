@@ -5,11 +5,9 @@ function init(){
 }
 
 function loadConfig(name){
-    console.log("Loading config");
     $.ajax({
         url: "dash_data/"+name.toLowerCase()+".json",
         success: function(result){
-            console.log("Config Loaded");
             loadGrid(result);
         }
     }); 
@@ -42,7 +40,6 @@ function loadData(config){
 }
 
 function loadGrid(config){
-    console.log("loading layout");
     $.ajax({
         url: "grid_data/"+config.grid+".html",
         success: function(result){
@@ -53,7 +50,6 @@ function loadGrid(config){
 }
 
 function createDashboard(dataSets,config){
-    console.log($(window).height());
     var height = $(window).height()- 100
     $('.whole').height(height);
     $('.half').height(height/2);
@@ -63,9 +59,7 @@ function createDashboard(dataSets,config){
 
 
     config.charts.forEach(function(chart,i){
-        console.log(chart);
         var bite = hxlBites.data(dataSets[chart.data]).reverse(chart.chartID);
-        console.log(bite);
         var id = '#chart' + i;
         if(bite.type=='chart'){
             createChart(id,bite);
@@ -152,6 +146,8 @@ function createChart(id,bite){
 
 function createMap(id,bite){
 
+    var bounds = [];
+
     id = id.substring(1);
 
     $('#'+id).html(bite.title+'<div id="'+id+'map" class="map"></div>');
@@ -160,6 +156,8 @@ function createMap(id,bite){
 
     var maxValue = bite.bite[1][1];
     var minValue = bite.bite[1][1];
+
+    console.log(bite);
 
     bite.bite.forEach(function(d){
         if(d[1]>maxValue){
@@ -197,20 +195,45 @@ function createMap(id,bite){
             : 'Hover for value');
     };
 
-    info.addTo(map);    
+    info.addTo(map);   
+    bite.geom_url.forEach(function(url){
+        $.ajax({
+            url: url,
+            dataType: 'json',
+            success: function(result){
+                var geom = {};
+                if(result.type=='Topology'){
+                  geom = topojson.feature(result,result.objects.geom);
+                } else {
+                  geom = result;
+                }               
+                var layer = L.geoJson(geom,
+                    {
+                        style: style,
+                        onEachFeature: onEachFeature
+                    }).addTo(map);
 
-    $.ajax({
-        url: bite.geom_url,
-        success: function(result){
-            var geom = topojson.feature(result,result.objects.geom);
-            var layer = L.geoJson(geom,
-                {
-                    style: style,
-                    onEachFeature: onEachFeature
-                }).addTo(map);
-            map.fitBounds(layer.getBounds());
-        }
-    });
+                var fitBound = bounds[0];
+                bounds.forEach(function(bound){
+                  if(fitBound._northEast.lat>bound._northEast.lat){
+                    fitBound._northEast.lat=bound._northEast.lat;
+                  }
+                  if(fitBound._northEast.lng>bound._northEast.lng){
+                    fitBound._northEast.lng=bound._northEast.lng;
+                  }
+                  if(fitBound._southWest.lng<bound._southWest.lng){
+                    fitBound._southWest.lng=bound._southWest.lng;
+                  }
+                  if(fitBound._southWest.lat<bound._southWest.lat){
+                    fitBound._southWest.lat=bound._southWest.lat;
+                  }                           
+                });
+
+
+                map.fitBounds(fitBound);                
+            }
+        });    
+    })
 
     function style(feature) {
         return {
@@ -224,6 +247,10 @@ function createMap(id,bite){
     }
 
     function onEachFeature(feature, layer) {
+        var featureCode = feature.properties[bite.geom_attribute];
+        if(!isNaN(bite.bite[featureCode])){
+          bounds.push(layer.getBounds());
+        }
         layer.on({
             mouseover: highlightFeature,
             mouseout: resetHighlight,

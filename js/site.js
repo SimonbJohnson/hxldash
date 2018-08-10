@@ -157,7 +157,7 @@ function createMap(id,bite){
     var maxValue = bite.bite[1][1];
     var minValue = bite.bite[1][1];
 
-    console.log(bite);
+    bite['lookup'] = {}
 
     bite.bite.forEach(function(d){
         if(d[1]>maxValue){
@@ -166,6 +166,7 @@ function createMap(id,bite){
         if(d[1]<minValue){
             minValue = d[1];
         }
+        bite.lookup[d[0]] = d[1];
     });
 
     L.tileLayer.grayscale('http://tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -196,9 +197,11 @@ function createMap(id,bite){
     };
 
     info.addTo(map);   
-    bite.geom_url.forEach(function(url){
+    loadGeoms(bite.geom_url);
+
+    function loadGeoms(urls){
         $.ajax({
-            url: url,
+            url: urls[0],
             dataType: 'json',
             success: function(result){
                 var geom = {};
@@ -211,29 +214,51 @@ function createMap(id,bite){
                     {
                         style: style,
                         onEachFeature: onEachFeature
-                    }).addTo(map);
+                    }
+                ).addTo(map);
+                if(urls.length>1){
+                    loadGeoms(urls.slice(1));
+                } else {
+                    fitBounds();
+                }
 
-                var fitBound = bounds[0];
-                bounds.forEach(function(bound){
-                  if(fitBound._northEast.lat>bound._northEast.lat){
-                    fitBound._northEast.lat=bound._northEast.lat;
-                  }
-                  if(fitBound._northEast.lng>bound._northEast.lng){
-                    fitBound._northEast.lng=bound._northEast.lng;
-                  }
-                  if(fitBound._southWest.lng<bound._southWest.lng){
-                    fitBound._southWest.lng=bound._southWest.lng;
-                  }
-                  if(fitBound._southWest.lat<bound._southWest.lat){
-                    fitBound._southWest.lat=bound._southWest.lat;
-                  }                           
-                });
-
-
-                map.fitBounds(fitBound);                
             }
-        });    
-    })
+        });          
+
+    }
+
+    function fitBounds(){
+        if(bounds.length>0){
+            var fitBound = bounds[0];
+            bounds.forEach(function(bound){
+              if(fitBound._northEast.lat<bound._northEast.lat){
+                fitBound._northEast.lat=bound._northEast.lat;
+              }
+              if(fitBound._northEast.lng<bound._northEast.lng){
+                fitBound._northEast.lng=bound._northEast.lng;
+              }
+              if(fitBound._southWest.lng>bound._southWest.lng){
+                fitBound._southWest.lng=bound._southWest.lng;
+              }
+              if(fitBound._southWest.lat>bound._southWest.lat){
+                fitBound._southWest.lat=bound._southWest.lat;
+              }                           
+            });
+
+            map.fitBounds(fitBound);
+        }
+    }
+
+    function onEachFeature(feature, layer) {
+        var featureCode = feature.properties[bite.geom_attribute];
+        if(!isNaN(bite.lookup[featureCode])){
+          bounds.push(layer.getBounds());
+        }
+        layer.on({
+            mouseover: highlightFeature,
+            mouseout: resetHighlight,
+        });
+    }
 
     function style(feature) {
         return {
@@ -244,17 +269,6 @@ function createMap(id,bite){
             dashArray: '3',
             fillOpacity: 0.7
         };
-    }
-
-    function onEachFeature(feature, layer) {
-        var featureCode = feature.properties[bite.geom_attribute];
-        if(!isNaN(bite.bite[featureCode])){
-          bounds.push(layer.getBounds());
-        }
-        layer.on({
-            mouseover: highlightFeature,
-            mouseout: resetHighlight,
-        });
     }
 
     function highlightFeature(e) {

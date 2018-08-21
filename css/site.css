@@ -105,3 +105,13 @@ table {
 .map {
 	height:90%;
 }
+
+.headlinetext {
+	font-size:20px;
+	text-align:center;
+}
+
+.headlinenumber {
+	font-size:36px;
+	text-align:center;
+}

@@ -53,6 +53,7 @@ function createDashboard(dataSets,config){
     var height = $(window).height()- 100
     $('.whole').height(height);
     $('.half').height(height/2);
+    $('.quarter').height(height/4);
 
     $('#title').html('<h2>'+config.title+'</h2>');
     $('#description').html('<p>'+config.subtext+'</p>');
@@ -69,6 +70,11 @@ function createDashboard(dataSets,config){
         }
         if(bite.type=='map'){
             createMap(id,bite);
+        }
+        if(bite.type =='text'){
+            if(bite.subtype=='topline figure'){
+                createHeadLineFigure(id,bite);
+            }
         }        
     });
 }
@@ -76,6 +82,16 @@ function createDashboard(dataSets,config){
 function createCrossTable(id,bite){
     $(id).html(bite.title);
     var html = hxlBites.render(id,bite);
+}
+
+function createHeadLineFigure(id,bite){
+    var headlineHTML = '<div id="'+id.slice(1)+'text" class="headlinetext"></div><div id="'+id.slice(1)+'number" class="headlinenumber"></div>';
+    $(id).html(headlineHTML);
+    var text = bite.bite.split(':')[0];
+    var number = bite.bite.split(':')[1].replace(/(<([^>]+)>)/ig,"").replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    console.log(text);
+    $(id+'text').html(text);
+    $(id+'number').html(number);
 }
 
 function createChart(id,bite){
@@ -111,6 +127,15 @@ function createChart(id,bite){
           horizontalBars: true,
           axisY: {
             offset: offset
+          },
+          axisX: {
+              labelInterpolationFnc: function(value, index) {
+                var divide = 1;
+                if(value>1000 && $(id).width()<500){
+                    divide = 2
+                }
+                return index % divide === 0 ? value : null;
+              }
           }
         });        
     } else {

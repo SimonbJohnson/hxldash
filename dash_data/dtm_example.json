@@ -1,11 +1,20 @@
 {
 	"title":"IOM DTM Example",
 	"subtext":"IOM DTM Example.",
+	"headlinefigures":3,
+	"headlinefigurecharts": [
+		{"data":"https://beta.proxy.hxlstandard.org/data/1d0a79/download/africa-dtm-baseline-assessments-topline.csv",
+		"chartID":"text0013/#country+name/1"},
+		{"data":"https://beta.proxy.hxlstandard.org/data/1d0a79/download/africa-dtm-baseline-assessments-topline.csv",
+		"chartID":"text0012/#population+hh+idps/5"},
+		{"data":"https://beta.proxy.hxlstandard.org/data/1d0a79/download/africa-dtm-baseline-assessments-topline.csv",
+		"chartID":"text0012/#population+idps+ind/6"}
+	],
 	"grid":"grid5",
-	"charts":[
+	"charts":[				
 		{"data":"https://beta.proxy.hxlstandard.org/data/1d0a79/download/africa-dtm-baseline-assessments-topline.csv",
 		"chartID":"map0002/#adm1+code/4/#population+idps+ind/6"},
 		{"data":"https://beta.proxy.hxlstandard.org/data/1d0a79/download/africa-dtm-baseline-assessments-topline.csv",
-		"chartID":"chart0018/#adm1+name/3/#population+hh+idps/5"}
+		"chartID":"chart0009/#country+name/1/#population+hh+idps/5"}
 	]
 }

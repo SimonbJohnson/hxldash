@@ -24,6 +24,15 @@ function loadData(config){
             chart.data = index;
         }
     });
+    config.headlinefigurecharts.forEach(function(chart){
+        var index = dataSets.indexOf(chart.data);
+        if(index==-1){
+            dataSets.push(chart.data);
+            chart.data = dataSets.length-1;
+        } else {
+            chart.data = index;
+        }
+    });    
     var dataSetLoaded=0;
     dataSets.forEach(function(dataSet,i){
         $.ajax({
@@ -50,6 +59,7 @@ function loadGrid(config){
 }
 
 function createDashboard(dataSets,config){
+    $('.sp-circle').remove();
     var height = $(window).height()- 100
     $('.whole').height(height);
     $('.half').height(height/2);
@@ -58,6 +68,9 @@ function createDashboard(dataSets,config){
     $('#title').html('<h2>'+config.title+'</h2>');
     $('#description').html('<p>'+config.subtext+'</p>');
 
+    if(config.headlinefigures>0){
+        createHeadlineFigures(config.headlinefigures,config.headlinefigurecharts);
+    }
 
     config.charts.forEach(function(chart,i){
         var bite = hxlBites.data(dataSets[chart.data]).reverse(chart.chartID);
@@ -82,6 +95,15 @@ function createDashboard(dataSets,config){
 function createCrossTable(id,bite){
     $(id).html(bite.title);
     var html = hxlBites.render(id,bite);
+}
+
+function createHeadlineFigures(count,charts){
+    charts.forEach(function(chart,i){
+        var bite = hxlBites.data(dataSets[chart.data]).reverse(chart.chartID);
+        var id="#headline"+i;
+        $('#headline').append('<div id="'+id.slice(1)+'" class="col-md-4 headlinefigure"></div>');
+        createHeadLineFigure(id,bite);
+    });
 }
 
 function createHeadLineFigure(id,bite){
@@ -115,7 +137,7 @@ function createChart(id,bite){
     if(maxLength>30){
         offset = 120
     }
-    $(id).html(bite.title);
+    $(id).html('<p class="bitetitle">'+bite.title+'</p>');
 
     if(bite.subtype=="row"){
         new Chartist.Bar(id, {
@@ -175,7 +197,7 @@ function createMap(id,bite){
 
     id = id.substring(1);
 
-    $('#'+id).html(bite.title+'<div id="'+id+'map" class="map"></div>');
+    $('#'+id).html('<p class="bitetitle">'+bite.title+'</p><div id="'+id+'map" class="map"></div>');
 
     var map = L.map(id+'map', { fadeAnimation: false }).setView([0, 0], 2);
 
@@ -221,10 +243,34 @@ function createMap(id,bite){
             : 'Hover for value');
     };
 
-    info.addTo(map);   
+    info.addTo(map);
+
+    var legend = L.control({position: 'bottomright'});
+
+    legend.onAdd = function (map) {
+
+        var div = L.DomUtil.create('div', 'info legend'),
+            grades = ['None', Number(minValue.toPrecision(3)), Number(((maxValue-minValue)/5+minValue).toPrecision(3)), Number(((maxValue-minValue)/5*2+minValue).toPrecision(3)), Number(((maxValue-minValue)/5*3+minValue).toPrecision(3)), Number(((maxValue-minValue)/5*4+minValue).toPrecision(3))],
+            classes = ['mapcolornone','mapcolor0','mapcolor1','mapcolor2','mapcolor3','mapcolor4'];
+
+        // loop through our density intervals and generate a label with a colored square for each interval
+        for (var i = 0; i < grades.length; i++) {
+            div.innerHTML +=
+                '<i class="'+classes[i]+'"></i> ' +
+                grades[i] + (grades[i + 1] ? i==0 ? '<br>' : ' &ndash; ' + grades[i + 1] + '<br>' : '+');
+        }
+
+        return div;
+    };
+
+    legend.addTo(map);
+
+
     loadGeoms(bite.geom_url);
 
     function loadGeoms(urls){
+        var total = urls.length;
+        $('.info').html('Loading Geoms: '+total + ' to go');
         $.ajax({
             url: urls[0],
             dataType: 'json',
@@ -244,6 +290,7 @@ function createMap(id,bite){
                 if(urls.length>1){
                     loadGeoms(urls.slice(1));
                 } else {
+                    $('.info').html('Hover for value');
                     fitBounds();
                 }
 
@@ -269,7 +316,7 @@ function createMap(id,bite){
                 fitBound._southWest.lat=bound._southWest.lat;
               }                           
             });
-
+            fitBound._northEast.lng=fitBound._northEast.lng+(fitBound._northEast.lng-fitBound._southWest.lng)*0.2;
             map.fitBounds(fitBound);
         }
     }
@@ -306,12 +353,18 @@ function createMap(id,bite){
 
     function getClass(id){
         var value = 0;
+        var found = false;
         bite.bite.forEach(function(d){
             if(d[0]==id){
                 value=d[1];
+                found = true;
             }
         });
-        return 'mapcolor'+Math.ceil((value-minValue)/(maxValue-minValue)*4);
+        if(found){
+            return 'mapcolor'+Math.ceil((value-minValue)/(maxValue-minValue)*4);
+        } else {
+            return 'mapcolornone';
+        }
     }        
 
 }

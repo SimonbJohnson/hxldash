@@ -76,13 +76,19 @@ function createDashboard(dataSets,config){
         var bite = hxlBites.data(dataSets[chart.data]).reverse(chart.chartID);
         var id = '#chart' + i;
         if(bite.type=='chart'){
-            createChart(id,bite);
+            if(chart.sort==undefined){
+                chart.sort = 'unsorted';
+            }
+            createChart(id,bite,chart.sort);
         }
         if(bite.type=='crosstable'){
             createCrossTable(id,bite);
         }
         if(bite.type=='map'){
-            createMap(id,bite);
+            if(chart.scale==undefined){
+                chart.scale = 'linear';
+            }
+            createMap(id,bite,chart.scale);
         }
         if(bite.type =='text'){
             if(bite.subtype=='topline figure'){
@@ -111,15 +117,21 @@ function createHeadLineFigure(id,bite){
     $(id).html(headlineHTML);
     var text = bite.bite.split(':')[0];
     var number = bite.bite.split(':')[1].replace(/(<([^>]+)>)/ig,"").replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-    console.log(text);
     $(id+'text').html(text);
     $(id+'number').html(number);
 }
 
-function createChart(id,bite){
+function createChart(id,bite,sort){
     var labels = [];
     var series = [];
     maxLength = 0;
+    if(sort=='descending'){
+        var topline = bite.bite.shift();
+        bite.bite.sort(function(a, b){
+            return b[1]-a[1];
+        });
+        bite.bite.unshift(topline);
+    }
     bite.bite.forEach(function(d,i){
         if(i>0){
             var label = d[0];
@@ -191,7 +203,7 @@ function createChart(id,bite){
     }    
 }
 
-function createMap(id,bite){
+function createMap(id,bite,scale){
 
     var bounds = [];
 
@@ -224,14 +236,14 @@ function createMap(id,bite){
     var info = L.control();
 
     info.onAdd = function (map) {
-        this._div = L.DomUtil.create('div', 'info'); // create a div with a class "info"
+        this._div = L.DomUtil.create('div', 'info infohover'); // create a div with a class "info"
         this.update();
         return this._div;
     };
 
     // method that we will use to update the control based on feature properties passed
     info.update = function (id) {
-        value = 0;
+        value = 'No Data';
         bite.bite.forEach(function(d){
                     if(d[0]==id){
                         value=d[1];
@@ -249,11 +261,17 @@ function createMap(id,bite){
 
     legend.onAdd = function (map) {
 
-        var div = L.DomUtil.create('div', 'info legend'),
-            grades = ['None', Number(minValue.toPrecision(3)), Number(((maxValue-minValue)/5+minValue).toPrecision(3)), Number(((maxValue-minValue)/5*2+minValue).toPrecision(3)), Number(((maxValue-minValue)/5*3+minValue).toPrecision(3)), Number(((maxValue-minValue)/5*4+minValue).toPrecision(3))],
-            classes = ['mapcolornone','mapcolor0','mapcolor1','mapcolor2','mapcolor3','mapcolor4'];
+        var div = L.DomUtil.create('div', 'info legend')
+        var grades = ['No Data', Number(minValue.toPrecision(3)), Number(((maxValue-minValue)/4+minValue).toPrecision(3)), Number(((maxValue-minValue)/4*2+minValue).toPrecision(3)), Number(((maxValue-minValue)/4*3+minValue).toPrecision(3)), Number(((maxValue-minValue)/4*4+minValue).toPrecision(3))]
+        if(scale=='log'){
+            grades.forEach(function(g,i){
+                if(i>0){
+                    grades[i] = Number((Math.exp(((i-1)/4)*Math.log(maxValue - minValue))+minValue).toPrecision(3));
+                }
+            });
+        }
+        var classes = ['mapcolornone','mapcolor0','mapcolor1','mapcolor2','mapcolor3','mapcolor4'];
 
-        // loop through our density intervals and generate a label with a colored square for each interval
         for (var i = 0; i < grades.length; i++) {
             div.innerHTML +=
                 '<i class="'+classes[i]+'"></i> ' +
@@ -270,7 +288,7 @@ function createMap(id,bite){
 
     function loadGeoms(urls){
         var total = urls.length;
-        $('.info').html('Loading Geoms: '+total + ' to go');
+        $('.infohover').html('Loading Geoms: '+total + ' to go');
         $.ajax({
             url: urls[0],
             dataType: 'json',
@@ -280,7 +298,7 @@ function createMap(id,bite){
                   geom = topojson.feature(result,result.objects.geom);
                 } else {
                   geom = result;
-                }               
+                }              
                 var layer = L.geoJson(geom,
                     {
                         style: style,
@@ -290,7 +308,7 @@ function createMap(id,bite){
                 if(urls.length>1){
                     loadGeoms(urls.slice(1));
                 } else {
-                    $('.info').html('Hover for value');
+                    $('.infohover').html('Hover for value');
                     fitBounds();
                 }
 
@@ -361,7 +379,11 @@ function createMap(id,bite){
             }
         });
         if(found){
-            return 'mapcolor'+Math.ceil((value-minValue)/(maxValue-minValue)*4);
+            if(scale=='log'){
+                return 'mapcolor'+Math.floor(Math.log(value-minValue)/Math.log(maxValue-minValue)*4);
+            } else {
+                return 'mapcolor'+Math.floor((value-minValue)/(maxValue-minValue)*4);
+            }
         } else {
             return 'mapcolornone';
         }

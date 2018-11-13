@@ -24,15 +24,17 @@ function loadData(config){
             chart.data = index;
         }
     });
-    config.headlinefigurecharts.forEach(function(chart){
-        var index = dataSets.indexOf(chart.data);
-        if(index==-1){
-            dataSets.push(chart.data);
-            chart.data = dataSets.length-1;
-        } else {
-            chart.data = index;
-        }
-    });    
+    if('headlinefigurecharts' in config){
+        config.headlinefigurecharts.forEach(function(chart){
+            var index = dataSets.indexOf(chart.data);
+            if(index==-1){
+                dataSets.push(chart.data);
+                chart.data = dataSets.length-1;
+            } else {
+                chart.data = index;
+            }
+        });
+    }    
     var dataSetLoaded=0;
     dataSets.forEach(function(dataSet,i){
         $.ajax({
@@ -68,7 +70,7 @@ function createDashboard(dataSets,config){
     $('#title').html('<h2>'+config.title+'</h2>');
     $('#description').html('<p>'+config.subtext+'</p>');
 
-    if(config.headlinefigures>0){
+    if('headlinefigures' in config && config.headlinefigures>0){
         createHeadlineFigures(config.headlinefigures,config.headlinefigurecharts);
     }
 

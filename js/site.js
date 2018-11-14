@@ -24,6 +24,7 @@ function loadData(config){
             chart.data = index;
         }
     });
+
     if('headlinefigurecharts' in config){
         config.headlinefigurecharts.forEach(function(chart){
             var index = dataSets.indexOf(chart.data);
@@ -34,7 +35,8 @@ function loadData(config){
                 chart.data = index;
             }
         });
-    }    
+    }  
+
     var dataSetLoaded=0;
     dataSets.forEach(function(dataSet,i){
         $.ajax({
@@ -100,9 +102,36 @@ function createDashboard(dataSets,config){
     });
 }
 
+function createFilterBar(count,filters){
+    filters.forEach(function(filter,i){
+        $('#headline').append('<div id="'+id.slice(1)+'" class="col-md-4 headlinefigure"></div>');
+    });
+}
+
+function createDropDowns(datasets,filters){
+    var dropdowns = [];
+    filters.forEach(function(filter){
+        var values = []
+        datasets.forEach(function(dataset){
+            values.push(hxl.wrap(dataset).withColumns(['filter']).getValues('#org'));
+        });
+        console.log(values);
+    });
+
+}
+
 function createCrossTable(id,bite){
     $(id).html(bite.title);
     var html = hxlBites.render(id,bite);
+}
+
+function createHeadlineFigures(count,charts){
+    charts.forEach(function(chart,i){
+        var bite = hxlBites.data(dataSets[chart.data]).reverse(chart.chartID);
+        var id="#headline"+i;
+        $('#headline').append('<div id="'+id.slice(1)+'" class="col-md-4 headlinefigure"></div>');
+        createHeadLineFigure(id,bite);
+    });
 }
 
 function createHeadlineFigures(count,charts){
@@ -124,6 +153,7 @@ function createHeadLineFigure(id,bite){
 }
 
 function createChart(id,bite,sort){
+    console.log(id);
     var labels = [];
     var series = [];
     maxLength = 0;
@@ -151,10 +181,12 @@ function createChart(id,bite,sort){
     if(maxLength>30){
         offset = 120
     }
-    $(id).html('<p class="bitetitle">'+bite.title+'</p>');
-
+    $(id).addClass('chartcontainer');
+    $(id).html('<div class="titlecontainer"><p class="bitetitle">'+bite.title+'</p></div><div id="chartcontainer'+id.substring(1)+'" class="chartelement"></div>');
+    id = id.substring(1);
+    $('#chartcontainer'+id).height($('#'+id).height()-50);
     if(bite.subtype=="row"){
-        new Chartist.Bar(id, {
+        new Chartist.Bar('#chartcontainer'+id, {
             labels: labels,
             series: [series]
         }, {
@@ -201,7 +233,7 @@ function createChart(id,bite,sort){
           }]
         ];
 
-        new Chartist.Pie(id, data, options, responsiveOptions);        
+        new Chartist.Pie('#chartcontainer'+id, data, options, responsiveOptions);        
     }    
 }
 

@@ -75,11 +75,12 @@ function createDashboard(dataSets,filterDataSets,config){
     $('#description').html('<p>'+config.subtext+'</p>');
 
     if('headlinefigures' in config && config.headlinefigures>0){
-        createHeadlineFigures(config.headlinefigures,config.headlinefigurecharts);
+        createHeadlineFigures(config.headlinefigures,config.headlinefigurecharts,filterDataSets);
     }
-
-    if('filters' in config && config.filtersOn){
-        createFilterBar(dataSets,config.filters);
+    if(dataSets==filterDataSets){
+        if('filters' in config && config.filtersOn){
+            createFilterBar(dataSets,config.filters,config);
+        }
     }
 
 
@@ -96,29 +97,25 @@ function createDashboard(dataSets,filterDataSets,config){
             createCrossTable(id,bite);
         }
         if(bite.type=='map'){
+            console.log(bite);
             if(chart.scale==undefined){
                 chart.scale = 'linear';
             }
             createMap(id,bite,chart.scale);
-        }
-        if(bite.type =='text'){
-            if(bite.subtype=='topline figure'){
-                createHeadLineFigure(id,bite);
-            }
         }        
     });
 }
 
-function createFilterBar(dataSets,filters){
+function createFilterBar(dataSets,filters,config){
     filters.forEach(function(filter,i){
         $('#filter').append('<div id="filter'+i+'" class="col-sm-4 filter"></div>');
         $('#filter'+i).html('<div class="dropdown"><p class="filtertext">Filter for '+filter.text+':</p><p class="filterdrop"><select id="dropdown'+i+'"><option>No selection</option></select></div>');
     });
-    createDropDowns(dataSets,filters);
+    createDropDowns(dataSets,filters,config);
 }
 
 
-function createDropDowns(dataSets,filters){
+function createDropDowns(dataSets,filters,config){
     var dropdowns = [];
     filters.forEach(function(filter,i){
         var values = []
@@ -135,14 +132,14 @@ function createDropDowns(dataSets,filters){
             var listFilters = filters.map(function(d,i){
                 return {'tag':d.tag,'value':$('#dropdown'+i).val()}
             });
-            filterDataSets(dataSets,listFilters);
+            filterDataSets(dataSets,listFilters,config);
         });
     });
 
 }
 
-function filterDataSets(dataSets,filters){
-    var outputDataSets = [];
+function filterDataSets(dataSets,filters,config){
+    var filteredDataSets = [];
     var hxlFilter = [];
     filters.forEach(function(v,i){
         if(v.value!='No selection'){
@@ -150,9 +147,9 @@ function filterDataSets(dataSets,filters){
         }
     });
     if(hxlFilter.length==0){
-        //createDashboard(dataSets,dataSets,config);
+        createDashboard(dataSets,dataSets,config);
     } else {
-        filteredDataSets = [];
+        
         dataSets.forEach(function(dataSet,i){
             filteredDataSets[i]=[];
             console.log(hxlFilter);
@@ -170,7 +167,7 @@ function filterDataSets(dataSets,filters){
                     filteredDataSets[i][rowindex+2].push(v);
                 });
             });
-            console.log(filteredDataSets);
+            createDashboard(dataSets,filteredDataSets,config);
         });
     }
 }
@@ -180,16 +177,7 @@ function createCrossTable(id,bite){
     var html = hxlBites.render(id,bite);
 }
 
-function createHeadlineFigures(count,charts){
-    charts.forEach(function(chart,i){
-        var bite = hxlBites.data(dataSets[chart.data]).reverse(chart.chartID);
-        var id="#headline"+i;
-        $('#headline').append('<div id="'+id.slice(1)+'" class="col-md-4 headlinefigure"></div>');
-        createHeadLineFigure(id,bite);
-    });
-}
-
-function createHeadlineFigures(count,charts){
+function createHeadlineFigures(count,charts,dataSets){
     charts.forEach(function(chart,i){
         var bite = hxlBites.data(dataSets[chart.data]).reverse(chart.chartID);
         var id="#headline"+i;
@@ -202,7 +190,8 @@ function createHeadLineFigure(id,bite){
     var headlineHTML = '<div id="'+id.slice(1)+'text" class="headlinetext"></div><div id="'+id.slice(1)+'number" class="headlinenumber"></div>';
     $(id).html(headlineHTML);
     var text = bite.bite.split(':')[0];
-    var number = bite.bite.split(':')[1].replace(/(<([^>]+)>)/ig,"").replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    var number = String(parseInt(bite.bite.split(':')[1].replace(/[^0-9\.]/g, ''))).replace(/(<([^>]+)>)/ig,"").replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    console.log(number);
     $(id+'text').html(text);
     $(id+'number').html(number);
 }
@@ -302,7 +291,7 @@ function createMap(id,bite,scale){
     var map = L.map(id+'map', { fadeAnimation: false }).setView([0, 0], 2);
 
     var maxValue = bite.bite[1][1];
-    var minValue = bite.bite[1][1];
+    var minValue = bite.bite[1][1]-1;
 
     bite['lookup'] = {}
 
@@ -310,8 +299,8 @@ function createMap(id,bite,scale){
         if(d[1]>maxValue){
             maxValue = d[1];
         }
-        if(d[1]<minValue){
-            minValue = d[1];
+        if(d[1]-1<minValue){
+            minValue = d[1]-1;
         }
         bite.lookup[d[0]] = d[1];
     });
@@ -361,9 +350,9 @@ function createMap(id,bite,scale){
         var classes = ['mapcolornone','mapcolor0','mapcolor1','mapcolor2','mapcolor3','mapcolor4'];
 
         for (var i = 0; i < grades.length; i++) {
-            div.innerHTML +=
-                '<i class="'+classes[i]+'"></i> ' +
-                grades[i] + (grades[i + 1] ? i==0 ? '<br>' : ' &ndash; ' + grades[i + 1] + '<br>' : '+');
+            div.innerHTML += '<i class="'+classes[i]+'"></i> ';
+            div.innerHTML += isNaN(Number(grades[i])) ? grades[i] : Math.ceil(grades[i]);
+            div.innerHTML += (grades[i + 1] ? i==0 ? '<br>' : ' &ndash; ' + Math.floor(grades[i + 1]) + '<br>' : '+');
         }
 
         return div;

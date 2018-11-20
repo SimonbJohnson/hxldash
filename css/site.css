@@ -70,6 +70,25 @@ table {
 	margin-bottom:20px;
 }
 
+.filtertext {
+	margin-bottom: 10px;
+	margin-left: 30px;
+	text-align:center;
+}
+
+.filterdrop {
+	margin-left: 30px;
+	text-align:center;
+}
+
+#filter {
+	padding-bottom:5px;
+	margin-bottom:30px;
+	border-bottom: 1px solid #d70206;
+	margin-left:30px;
+	margin-right:30px;
+}
+
 .mapcolornone {
 	fill: #eeeeee;
 	background-color: #eeeeee;
@@ -134,20 +153,11 @@ table {
     margin-right: 8px;
     opacity: 0.7;
 }
-/*
-.headlinefigure {
-	border-width:1px;
-	border-color:#eeeeee;
-	border-style:solid;
-}
 
-.chart {
-	border-width:1px;
-	border-color:#eeeeee;
-	border-style:solid;
-	padding-top:10px;
-	padding-bottom:10px;
-}*/
+
+#headline {
+	margin-bottom:20px;
+}
 
 .headlinenumber {
 	border-bottom-width:1px;
@@ -169,4 +179,12 @@ table {
 
 .map {
 	margin-top:25px;
+}
+
+select{
+    text-align-last:center;
+}
+
+.titlecontainer {
+	min-height:55px;
 }

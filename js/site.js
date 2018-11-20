@@ -45,7 +45,7 @@ function loadData(config){
                 dataSets[i] = result;
                 dataSetLoaded++;
                 if(dataSets.length == dataSetLoaded){
-                    createDashboard(dataSets,config);
+                    createDashboard(dataSets,dataSets,config);
                 }
             }
         });                
@@ -62,12 +62,14 @@ function loadGrid(config){
     });    
 }
 
-function createDashboard(dataSets,config){
+function createDashboard(dataSets,filterDataSets,config){
     $('.sp-circle').remove();
     var height = $(window).height()- 100
     $('.whole').height(height);
     $('.half').height(height/2);
     $('.quarter').height(height/4);
+    $('.third').height(height/3);
+    $('.twothird').height(height/3*2);
 
     $('#title').html('<h2>'+config.title+'</h2>');
     $('#description').html('<p>'+config.subtext+'</p>');
@@ -76,8 +78,13 @@ function createDashboard(dataSets,config){
         createHeadlineFigures(config.headlinefigures,config.headlinefigurecharts);
     }
 
+    if('filters' in config && config.filtersOn){
+        createFilterBar(dataSets,config.filters);
+    }
+
+
     config.charts.forEach(function(chart,i){
-        var bite = hxlBites.data(dataSets[chart.data]).reverse(chart.chartID);
+        var bite = hxlBites.data(filterDataSets[chart.data]).reverse(chart.chartID);
         var id = '#chart' + i;
         if(bite.type=='chart'){
             if(chart.sort==undefined){
@@ -102,22 +109,70 @@ function createDashboard(dataSets,config){
     });
 }
 
-function createFilterBar(count,filters){
+function createFilterBar(dataSets,filters){
     filters.forEach(function(filter,i){
-        $('#headline').append('<div id="'+id.slice(1)+'" class="col-md-4 headlinefigure"></div>');
+        $('#filter').append('<div id="filter'+i+'" class="col-sm-4 filter"></div>');
+        $('#filter'+i).html('<div class="dropdown"><p class="filtertext">Filter for '+filter.text+':</p><p class="filterdrop"><select id="dropdown'+i+'"><option>No selection</option></select></div>');
     });
+    createDropDowns(dataSets,filters);
 }
 
-function createDropDowns(datasets,filters){
+
+function createDropDowns(dataSets,filters){
     var dropdowns = [];
-    filters.forEach(function(filter){
+    filters.forEach(function(filter,i){
         var values = []
-        datasets.forEach(function(dataset){
-            values.push(hxl.wrap(dataset).withColumns(['filter']).getValues('#org'));
+        dataSets.forEach(function(dataset){
+            values.push(hxl.wrap(dataset).getValues(filter.tag));
         });
-        console.log(values);
+        var unique = values.filter(function(v,i,self){
+            return self.indexOf(v) === i;
+        });
+        unique[0].forEach(function(value){
+            $('#dropdown'+i).append('<option value="'+value+'"">'+value+'</option>');
+        });
+        $('#dropdown'+i).on('change',function(){
+            var listFilters = filters.map(function(d,i){
+                return {'tag':d.tag,'value':$('#dropdown'+i).val()}
+            });
+            filterDataSets(dataSets,listFilters);
+        });
     });
 
+}
+
+function filterDataSets(dataSets,filters){
+    var outputDataSets = [];
+    var hxlFilter = [];
+    filters.forEach(function(v,i){
+        if(v.value!='No selection'){
+            hxlFilter.push(v.tag+'='+v.value);
+        }
+    });
+    if(hxlFilter.length==0){
+        //createDashboard(dataSets,dataSets,config);
+    } else {
+        filteredDataSets = [];
+        dataSets.forEach(function(dataSet,i){
+            filteredDataSets[i]=[];
+            console.log(hxlFilter);
+            hxl.wrap(dataSet).withRows(hxlFilter).forEach(function(row,col,rowindex){
+                if(rowindex==0){
+                    filteredDataSets[i].push([]);
+                    filteredDataSets[i].push([]);
+                    row.columns.forEach(function(c,j){
+                        filteredDataSets[i][0].push(c.header);
+                        filteredDataSets[i][1].push(c.displayTag);
+                    });
+                }
+                filteredDataSets[i].push([]);
+                row.values.forEach(function(v,j){
+                    filteredDataSets[i][rowindex+2].push(v);
+                });
+            });
+            console.log(filteredDataSets);
+        });
+    }
 }
 
 function createCrossTable(id,bite){
@@ -153,7 +208,6 @@ function createHeadLineFigure(id,bite){
 }
 
 function createChart(id,bite,sort){
-    console.log(id);
     var labels = [];
     var series = [];
     maxLength = 0;

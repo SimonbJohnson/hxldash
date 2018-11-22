@@ -85,7 +85,6 @@ function createDashboard(dataSets,filterDataSets,config){
 
     config.charts.forEach(function(chart,i){
         var id = '#chart' + i;
-        console.log(filterDataSets[chart.data]);
         if(filterDataSets[chart.data].length==0){
             $(id).html('<p>No Data</p>');
         } else {

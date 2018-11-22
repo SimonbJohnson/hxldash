@@ -122,12 +122,23 @@ function createDropDowns(dataSets,filters,config){
     filters.forEach(function(filter,i){
         var values = []
         dataSets.forEach(function(dataset){
-            values.push(hxl.wrap(dataset).getValues(filter.tag));
+            hxl.wrap(dataset).getValues(filter.tag).forEach(function(v){
+                values.push(v);
+            })
+            
         });
         var unique = values.filter(function(v,i,self){
             return self.indexOf(v) === i;
+        }).sort(function(a,b){
+            if(a > b){
+                return 1;
+            } else if (b > a){
+                return -1;
+            } else {
+                return 0;
+            }
         });
-        unique[0].forEach(function(value){
+        unique.forEach(function(value){
             $('#dropdown'+i).append('<option value="'+value+'"">'+value+'</option>');
         });
         $('#dropdown'+i).on('change',function(){
@@ -468,6 +479,8 @@ function createMap(id,bite,scale){
         });
         if(found){
             if(scale=='log'){
+                var maxDivide = Math.log(maxValue-minValue)
+                if(maxDivide ==0){return 'mapcolor'+4}
                 return 'mapcolor'+Math.floor(Math.log(value-minValue)/Math.log(maxValue-minValue)*4);
             } else {
                 return 'mapcolor'+Math.floor((value-minValue)/(maxValue-minValue)*4);

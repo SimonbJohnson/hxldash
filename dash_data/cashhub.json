@@ -2,7 +2,7 @@
 	"title":"Cash Hub Example",
 	"subtext":"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
 	"filtersOn":true,
-	"filters":[{"text":"Sector","tag":"#sector"},{"text":"Restriction","tag":"#modality+restriction"},{"text":"Delivery","tag":"#channel"}],
+	"filters":[{"text":"Sector","tag":"#sector"},{"text":"Country","tag":"#country+name"},{"text":"Delivery","tag":"#channel-ecash"}],
 	"headlinefigures":3,
 	"headlinefigurecharts": [
 		{"data":"https://proxy.hxlstandard.org/data.csv?filter01=select&select-query01-01=%23date%2Byear%3D2017&filter02=replace-map&replace-map-url02=https%3A%2F%2Fdocs.google.com%2Fspreadsheets%2Fd%2F1hTE0U3V8x18homc5KxfA7IIrv1Y9F1oulhJt0Z4z3zo%2Fedit%23gid%3D0&filter03=merge&merge-url03=https%3A%2F%2Fdocs.google.com%2Fspreadsheets%2Fd%2F1GugpfyzridvfezFcDsl6dNlpZDqI8TQJw-Jx52obny8%2Fedit%23gid%3D0&merge-keys03=%23country%2Bname&merge-tags03=%23country%2Bcode&filter04=replace&replace-pattern04=%5E%24&replace-regex04=on&replace-value04=No+data&replace-tags04=%23sector%2C%23modality%2C%23channel-ecash&url=https%3A%2F%2Fdocs.google.com%2Fspreadsheets%2Fd%2F1s-piTxQUT0Q8ReO6uVy-72ZFb3R9K3I5zAnb2YNN83c%2Fedit%23gid%3D1496776846",

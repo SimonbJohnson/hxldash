@@ -73,7 +73,6 @@ function createDashboard(dataSets,filterDataSets,config){
 
     $('#title').html('<h2>'+config.title+'</h2>');
     $('#description').html('<p>'+config.subtext+'</p>');
-
     if('headlinefigures' in config && config.headlinefigures>0){
         createHeadlineFigures(config.headlinefigures,config.headlinefigurecharts,filterDataSets);
     }
@@ -85,23 +84,27 @@ function createDashboard(dataSets,filterDataSets,config){
 
 
     config.charts.forEach(function(chart,i){
-        var bite = hxlBites.data(filterDataSets[chart.data]).reverse(chart.chartID);
         var id = '#chart' + i;
-        if(bite.type=='chart'){
-            if(chart.sort==undefined){
-                chart.sort = 'unsorted';
+        console.log(filterDataSets[chart.data]);
+        if(filterDataSets[chart.data].length==0){
+            $(id).html('<p>No Data</p>');
+        } else {
+            var bite = hxlBites.data(filterDataSets[chart.data]).reverse(chart.chartID);
+            if(bite.type=='chart'){
+                if(chart.sort==undefined){
+                    chart.sort = 'unsorted';
+                }
+                createChart(id,bite,chart.sort);
             }
-            createChart(id,bite,chart.sort);
-        }
-        if(bite.type=='crosstable'){
-            createCrossTable(id,bite);
-        }
-        if(bite.type=='map'){
-            console.log(bite);
-            if(chart.scale==undefined){
-                chart.scale = 'linear';
+            if(bite.type=='crosstable'){
+                createCrossTable(id,bite);
             }
-            createMap(id,bite,chart.scale);
+            if(bite.type=='map'){
+                if(chart.scale==undefined){
+                    chart.scale = 'linear';
+                }
+                createMap(id,bite,chart.scale);
+            }
         }        
     });
 }
@@ -143,7 +146,8 @@ function filterDataSets(dataSets,filters,config){
     var hxlFilter = [];
     filters.forEach(function(v,i){
         if(v.value!='No selection'){
-            hxlFilter.push(v.tag+'='+v.value);
+            hxlFilter.push({pattern: v.tag, test: v.value});
+            //hxlFilter.push(v.tag+'='+v.value);
         }
     });
     if(hxlFilter.length==0){
@@ -152,8 +156,11 @@ function filterDataSets(dataSets,filters,config){
         
         dataSets.forEach(function(dataSet,i){
             filteredDataSets[i]=[];
-            console.log(hxlFilter);
-            hxl.wrap(dataSet).withRows(hxlFilter).forEach(function(row,col,rowindex){
+            hxlData = hxl.wrap(dataSet);
+            hxlFilter.forEach(function(f,i){
+                hxlData = hxlData.withRows(f)
+            })
+            hxlData.forEach(function(row,col,rowindex){
                 if(rowindex==0){
                     filteredDataSets[i].push([]);
                     filteredDataSets[i].push([]);
@@ -165,6 +172,7 @@ function filterDataSets(dataSets,filters,config){
                 filteredDataSets[i].push([]);
                 row.values.forEach(function(v,j){
                     filteredDataSets[i][rowindex+2].push(v);
+
                 });
             });
             createDashboard(dataSets,filteredDataSets,config);
@@ -179,10 +187,15 @@ function createCrossTable(id,bite){
 
 function createHeadlineFigures(count,charts,dataSets){
     charts.forEach(function(chart,i){
-        var bite = hxlBites.data(dataSets[chart.data]).reverse(chart.chartID);
         var id="#headline"+i;
-        $('#headline').append('<div id="'+id.slice(1)+'" class="col-md-4 headlinefigure"></div>');
-        createHeadLineFigure(id,bite);
+        if(dataSets[chart.data].length==0){
+            $(id).html('No Data');
+        } else {
+            var bite = hxlBites.data(dataSets[chart.data]).reverse(chart.chartID);
+            
+            $('#headline').append('<div id="'+id.slice(1)+'" class="col-md-4 headlinefigure"></div>');
+            createHeadLineFigure(id,bite);
+        }
     });
 }
 
@@ -191,7 +204,6 @@ function createHeadLineFigure(id,bite){
     $(id).html(headlineHTML);
     var text = bite.bite.split(':')[0];
     var number = String(parseInt(bite.bite.split(':')[1].replace(/[^0-9\.]/g, ''))).replace(/(<([^>]+)>)/ig,"").replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-    console.log(number);
     $(id+'text').html(text);
     $(id+'number').html(number);
 }
@@ -307,7 +319,7 @@ function createMap(id,bite,scale){
 
     L.tileLayer.grayscale('http://tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: 'Map data &copy; <a href="http://openstreetmap.org/">OpenStreetMap</a> contributors',
-        maxZoom: 14, minZoom: 2
+        maxZoom: 14, minZoom: 1
     }).addTo(map);
 
     var info = L.control();

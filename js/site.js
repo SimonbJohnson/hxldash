@@ -24,15 +24,19 @@ function loadData(config){
             chart.data = index;
         }
     });
-    config.headlinefigurecharts.forEach(function(chart){
-        var index = dataSets.indexOf(chart.data);
-        if(index==-1){
-            dataSets.push(chart.data);
-            chart.data = dataSets.length-1;
-        } else {
-            chart.data = index;
-        }
-    });    
+
+    if('headlinefigurecharts' in config){
+        config.headlinefigurecharts.forEach(function(chart){
+            var index = dataSets.indexOf(chart.data);
+            if(index==-1){
+                dataSets.push(chart.data);
+                chart.data = dataSets.length-1;
+            } else {
+                chart.data = index;
+            }
+        });
+    }  
+
     var dataSetLoaded=0;
     dataSets.forEach(function(dataSet,i){
         $.ajax({
@@ -41,7 +45,7 @@ function loadData(config){
                 dataSets[i] = result;
                 dataSetLoaded++;
                 if(dataSets.length == dataSetLoaded){
-                    createDashboard(dataSets,config);
+                    createDashboard(dataSets,dataSets,config);
                 }
             }
         });                
@@ -58,44 +62,122 @@ function loadGrid(config){
     });    
 }
 
-function createDashboard(dataSets,config){
+function createDashboard(dataSets,filterDataSets,config){
     $('.sp-circle').remove();
     var height = $(window).height()- 100
     $('.whole').height(height);
     $('.half').height(height/2);
     $('.quarter').height(height/4);
+    $('.third').height(height/3);
+    $('.twothird').height(height/3*2);
 
     $('#title').html('<h2>'+config.title+'</h2>');
     $('#description').html('<p>'+config.subtext+'</p>');
-
-    if(config.headlinefigures>0){
-        createHeadlineFigures(config.headlinefigures,config.headlinefigurecharts);
+    if('headlinefigures' in config && config.headlinefigures>0){
+        createHeadlineFigures(config.headlinefigures,config.headlinefigurecharts,filterDataSets);
+    }
+    if(dataSets==filterDataSets){
+        if('filters' in config && config.filtersOn){
+            createFilterBar(dataSets,config.filters,config);
+        }
     }
 
+
     config.charts.forEach(function(chart,i){
-        var bite = hxlBites.data(dataSets[chart.data]).reverse(chart.chartID);
         var id = '#chart' + i;
-        if(bite.type=='chart'){
-            if(chart.sort==undefined){
-                chart.sort = 'unsorted';
+        console.log(filterDataSets[chart.data]);
+        if(filterDataSets[chart.data].length==0){
+            $(id).html('<p>No Data</p>');
+        } else {
+            var bite = hxlBites.data(filterDataSets[chart.data]).reverse(chart.chartID);
+            if(bite.type=='chart'){
+                if(chart.sort==undefined){
+                    chart.sort = 'unsorted';
+                }
+                createChart(id,bite,chart.sort);
             }
-            createChart(id,bite,chart.sort);
-        }
-        if(bite.type=='crosstable'){
-            createCrossTable(id,bite);
-        }
-        if(bite.type=='map'){
-            if(chart.scale==undefined){
-                chart.scale = 'linear';
+            if(bite.type=='crosstable'){
+                createCrossTable(id,bite);
             }
-            createMap(id,bite,chart.scale);
-        }
-        if(bite.type =='text'){
-            if(bite.subtype=='topline figure'){
-                createHeadLineFigure(id,bite);
+            if(bite.type=='map'){
+                if(chart.scale==undefined){
+                    chart.scale = 'linear';
+                }
+                createMap(id,bite,chart.scale);
             }
         }        
     });
+}
+
+function createFilterBar(dataSets,filters,config){
+    filters.forEach(function(filter,i){
+        $('#filter').append('<div id="filter'+i+'" class="col-sm-4 filter"></div>');
+        $('#filter'+i).html('<div class="dropdown"><p class="filtertext">Filter for '+filter.text+':</p><p class="filterdrop"><select id="dropdown'+i+'"><option>No selection</option></select></div>');
+    });
+    createDropDowns(dataSets,filters,config);
+}
+
+
+function createDropDowns(dataSets,filters,config){
+    var dropdowns = [];
+    filters.forEach(function(filter,i){
+        var values = []
+        dataSets.forEach(function(dataset){
+            values.push(hxl.wrap(dataset).getValues(filter.tag));
+        });
+        var unique = values.filter(function(v,i,self){
+            return self.indexOf(v) === i;
+        });
+        unique[0].forEach(function(value){
+            $('#dropdown'+i).append('<option value="'+value+'"">'+value+'</option>');
+        });
+        $('#dropdown'+i).on('change',function(){
+            var listFilters = filters.map(function(d,i){
+                return {'tag':d.tag,'value':$('#dropdown'+i).val()}
+            });
+            filterDataSets(dataSets,listFilters,config);
+        });
+    });
+
+}
+
+function filterDataSets(dataSets,filters,config){
+    var filteredDataSets = [];
+    var hxlFilter = [];
+    filters.forEach(function(v,i){
+        if(v.value!='No selection'){
+            hxlFilter.push({pattern: v.tag, test: v.value});
+            //hxlFilter.push(v.tag+'='+v.value);
+        }
+    });
+    if(hxlFilter.length==0){
+        createDashboard(dataSets,dataSets,config);
+    } else {
+        
+        dataSets.forEach(function(dataSet,i){
+            filteredDataSets[i]=[];
+            hxlData = hxl.wrap(dataSet);
+            hxlFilter.forEach(function(f,i){
+                hxlData = hxlData.withRows(f)
+            })
+            hxlData.forEach(function(row,col,rowindex){
+                if(rowindex==0){
+                    filteredDataSets[i].push([]);
+                    filteredDataSets[i].push([]);
+                    row.columns.forEach(function(c,j){
+                        filteredDataSets[i][0].push(c.header);
+                        filteredDataSets[i][1].push(c.displayTag);
+                    });
+                }
+                filteredDataSets[i].push([]);
+                row.values.forEach(function(v,j){
+                    filteredDataSets[i][rowindex+2].push(v);
+
+                });
+            });
+            createDashboard(dataSets,filteredDataSets,config);
+        });
+    }
 }
 
 function createCrossTable(id,bite){
@@ -103,12 +185,17 @@ function createCrossTable(id,bite){
     var html = hxlBites.render(id,bite);
 }
 
-function createHeadlineFigures(count,charts){
+function createHeadlineFigures(count,charts,dataSets){
     charts.forEach(function(chart,i){
-        var bite = hxlBites.data(dataSets[chart.data]).reverse(chart.chartID);
         var id="#headline"+i;
-        $('#headline').append('<div id="'+id.slice(1)+'" class="col-md-4 headlinefigure"></div>');
-        createHeadLineFigure(id,bite);
+        if(dataSets[chart.data].length==0){
+            $(id).html('No Data');
+        } else {
+            var bite = hxlBites.data(dataSets[chart.data]).reverse(chart.chartID);
+            
+            $('#headline').append('<div id="'+id.slice(1)+'" class="col-md-4 headlinefigure"></div>');
+            createHeadLineFigure(id,bite);
+        }
     });
 }
 
@@ -116,7 +203,7 @@ function createHeadLineFigure(id,bite){
     var headlineHTML = '<div id="'+id.slice(1)+'text" class="headlinetext"></div><div id="'+id.slice(1)+'number" class="headlinenumber"></div>';
     $(id).html(headlineHTML);
     var text = bite.bite.split(':')[0];
-    var number = bite.bite.split(':')[1].replace(/(<([^>]+)>)/ig,"").replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    var number = String(parseInt(bite.bite.split(':')[1].replace(/[^0-9\.]/g, ''))).replace(/(<([^>]+)>)/ig,"").replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     $(id+'text').html(text);
     $(id+'number').html(number);
 }
@@ -149,10 +236,12 @@ function createChart(id,bite,sort){
     if(maxLength>30){
         offset = 120
     }
-    $(id).html('<p class="bitetitle">'+bite.title+'</p>');
-
+    $(id).addClass('chartcontainer');
+    $(id).html('<div class="titlecontainer"><p class="bitetitle">'+bite.title+'</p></div><div id="chartcontainer'+id.substring(1)+'" class="chartelement"></div>');
+    id = id.substring(1);
+    $('#chartcontainer'+id).height($('#'+id).height()-50);
     if(bite.subtype=="row"){
-        new Chartist.Bar(id, {
+        new Chartist.Bar('#chartcontainer'+id, {
             labels: labels,
             series: [series]
         }, {
@@ -199,7 +288,7 @@ function createChart(id,bite,sort){
           }]
         ];
 
-        new Chartist.Pie(id, data, options, responsiveOptions);        
+        new Chartist.Pie('#chartcontainer'+id, data, options, responsiveOptions);        
     }    
 }
 
@@ -214,7 +303,7 @@ function createMap(id,bite,scale){
     var map = L.map(id+'map', { fadeAnimation: false }).setView([0, 0], 2);
 
     var maxValue = bite.bite[1][1];
-    var minValue = bite.bite[1][1];
+    var minValue = bite.bite[1][1]-1;
 
     bite['lookup'] = {}
 
@@ -222,15 +311,15 @@ function createMap(id,bite,scale){
         if(d[1]>maxValue){
             maxValue = d[1];
         }
-        if(d[1]<minValue){
-            minValue = d[1];
+        if(d[1]-1<minValue){
+            minValue = d[1]-1;
         }
         bite.lookup[d[0]] = d[1];
     });
 
     L.tileLayer.grayscale('http://tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: 'Map data &copy; <a href="http://openstreetmap.org/">OpenStreetMap</a> contributors',
-        maxZoom: 14, minZoom: 2
+        maxZoom: 14, minZoom: 1
     }).addTo(map);
 
     var info = L.control();
@@ -273,9 +362,9 @@ function createMap(id,bite,scale){
         var classes = ['mapcolornone','mapcolor0','mapcolor1','mapcolor2','mapcolor3','mapcolor4'];
 
         for (var i = 0; i < grades.length; i++) {
-            div.innerHTML +=
-                '<i class="'+classes[i]+'"></i> ' +
-                grades[i] + (grades[i + 1] ? i==0 ? '<br>' : ' &ndash; ' + grades[i + 1] + '<br>' : '+');
+            div.innerHTML += '<i class="'+classes[i]+'"></i> ';
+            div.innerHTML += isNaN(Number(grades[i])) ? grades[i] : Math.ceil(grades[i]);
+            div.innerHTML += (grades[i + 1] ? i==0 ? '<br>' : ' &ndash; ' + Math.floor(grades[i + 1]) + '<br>' : '+');
         }
 
         return div;

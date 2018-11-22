@@ -1,0 +1,27 @@
+{
+	"title":"North DRC Ebola outbreak",
+	"subtext":"Deaths and cases from the Ebola outbreak in North Kivu and Ituri. Data filtered for latest ministry of health report.  Data provided by <a href=\"https://data.humdata.org/dataset/ebola-cases-and-deaths-drc-north-kivu\">HDX</a>.",
+	"filtersOn":false,
+	"filters":[],
+	"headlinefigures":2,
+	"headlinefigurecharts": [
+		{"data":"https://docs.google.com/spreadsheets/d/e/2PACX-1vSrr9DRaC2fXzPdmOxLW-egSYtxmEp_RKoYGggt-zOKYXSx4RjPsM4EO19H7OJVX1esTtIoFvlKFWcn/pub?gid=1564028913&single=true&output=csv",
+		"chartID":"text0012/#affected+infected+total/7"},
+		{"data":"https://docs.google.com/spreadsheets/d/e/2PACX-1vSrr9DRaC2fXzPdmOxLW-egSYtxmEp_RKoYGggt-zOKYXSx4RjPsM4EO19H7OJVX1esTtIoFvlKFWcn/pub?gid=1564028913&single=true&output=csv",
+		"chartID":"text0012/#affected+killed+total/10"},
+		{"data":"https://docs.google.com/spreadsheets/d/e/2PACX-1vSrr9DRaC2fXzPdmOxLW-egSYtxmEp_RKoYGggt-zOKYXSx4RjPsM4EO19H7OJVX1esTtIoFvlKFWcn/pub?gid=1564028913&single=true&output=csv",
+		"chartID":"text0012/#affected+killed+new/9"}
+	],
+	"grid":"grid2",
+	"charts":[				
+		{"data":"https://docs.google.com/spreadsheets/d/e/2PACX-1vSrr9DRaC2fXzPdmOxLW-egSYtxmEp_RKoYGggt-zOKYXSx4RjPsM4EO19H7OJVX1esTtIoFvlKFWcn/pub?gid=1564028913&single=true&output=csv",
+		"chartID":"chart0021/#adm2+health+name/4/#affected+confirmed+infected/6",
+		"sort":"descending"},
+		{"data":"https://docs.google.com/spreadsheets/d/e/2PACX-1vSrr9DRaC2fXzPdmOxLW-egSYtxmEp_RKoYGggt-zOKYXSx4RjPsM4EO19H7OJVX1esTtIoFvlKFWcn/pub?gid=1564028913&single=true&output=csv",
+		"chartID":"chart0021/#adm2+health+name/4/#affected+killed+total/10",
+		"sort":"descending"},
+		{"data":"https://docs.google.com/spreadsheets/d/e/2PACX-1vSrr9DRaC2fXzPdmOxLW-egSYtxmEp_RKoYGggt-zOKYXSx4RjPsM4EO19H7OJVX1esTtIoFvlKFWcn/pub?gid=1564028913&single=true&output=csv",
+		"chartID":"chart0009/#adm1+health+name/3/#affected+killed+new/9",
+		"sort":"descending"}
+	]
+}

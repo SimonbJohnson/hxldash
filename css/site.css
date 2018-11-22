@@ -70,16 +70,24 @@ table {
 	margin-bottom:20px;
 }
 
-.filtertext {
-	margin-bottom: 10px;
-	margin-left: 30px;
-	text-align:center;
+@media only screen and (min-width: 600px){
+	.filtertext {
+		text-align:center;
+	}
+
+	.filterdrop {
+		text-align:center;
+	}
+
+	select {
+    	text-align-last:center;
+	}
 }
 
-.filterdrop {
-	margin-left: 30px;
-	text-align:center;
+.filtertext {
+	margin-bottom: 10px;
 }
+
 
 #filter {
 	padding-bottom:5px;
@@ -179,10 +187,6 @@ table {
 
 .map {
 	margin-top:25px;
-}
-
-select{
-    text-align-last:center;
 }
 
 .titlecontainer {

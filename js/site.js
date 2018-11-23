@@ -263,9 +263,12 @@ function createChart(id,bite,sort){
           },
           axisX: {
               labelInterpolationFnc: function(value, index) {
-                var divide = 1;
+                var divide = 0.5;
                 if(value>1000 && $(id).width()<500){
-                    divide = 2
+                    divide = 1
+                }
+                if(value>999999){
+                    value = value / 1000000 + 'm';
                 }
                 return index % divide === 0 ? value : null;
               }

@@ -84,25 +84,33 @@ function createDashboard(dataSets,filterDataSets,config){
 
 
     config.charts.forEach(function(chart,i){
+        if(typeof chart.chartID === 'string'){
+            chart.chartID = [chart.chartID];
+        }
         var id = '#chart' + i;
         if(filterDataSets[chart.data].length==0){
             $(id).html('<p>No Data</p>');
         } else {
-            var bite = hxlBites.data(filterDataSets[chart.data]).reverse(chart.chartID);
-            if(bite.type=='chart'){
+            var bites = [];
+
+            chart.chartID.forEach(function(id){
+                bites.push(hxlBites.data(filterDataSets[chart.data]).reverse(id));
+            });
+            
+            if(bites[0].type=='chart'){
                 if(chart.sort==undefined){
                     chart.sort = 'unsorted';
                 }
-                createChart(id,bite,chart.sort);
+                createChart(id,bites,chart.sort);
             }
-            if(bite.type=='crosstable'){
-                createCrossTable(id,bite);
+            if(bites[0].type=='crosstable'){
+                createCrossTable(id,bites[0]);
             }
-            if(bite.type=='map'){
+            if(bites[0].type=='map'){
                 if(chart.scale==undefined){
                     chart.scale = 'linear';
                 }
-                createMap(id,bite,chart.scale);
+                createMap(id,bites[0],chart.scale);
             }
         }        
     });
@@ -219,38 +227,41 @@ function createHeadLineFigure(id,bite){
 }
 
 function createChart(id,bite,sort){
+
+    console.log(bite);
     var labels = [];
     var series = [];
+    var subtype = bite[0].subtype;
     maxLength = 0;
     if(sort=='descending'){
-        var topline = bite.bite.shift();
-        bite.bite.sort(function(a, b){
+        var topline = bite[0].bite.shift();
+        bite[0].bite.sort(function(a, b){
             return b[1]-a[1];
         });
-        bite.bite.unshift(topline);
+        bite[0].bite.unshift(topline);
     }
-    bite.bite.forEach(function(d,i){
-        if(i>0){
-            var label = d[0];
-            if(label.length>maxLength){
-                maxLength = label.length;
-            }
-            if(label.length>40){
-                label = label.substring(0,35)+'...'
-            }
-            labels.push(label);
-            series.push(d[1]);
-        }  
-    })
     var offset = 70;
     if(maxLength>30){
         offset = 120
     }
     $(id).addClass('chartcontainer');
-    $(id).html('<div class="titlecontainer"><p class="bitetitle">'+bite.title+'</p></div><div id="chartcontainer'+id.substring(1)+'" class="chartelement"></div>');
+    $(id).html('<div class="titlecontainer"><p class="bitetitle">'+bite[0].title+'</p></div><div id="chartcontainer'+id.substring(1)+'" class="chartelement"></div>');
     id = id.substring(1);
     $('#chartcontainer'+id).height($('#'+id).height()-50);
-    if(bite.subtype=="row"){
+    if(subtype=="row"){
+        bite[0].bite.forEach(function(d,i){
+            if(i>0){
+                var label = d[0];
+                if(label.length>maxLength){
+                    maxLength = label.length;
+                }
+                if(label.length>40){
+                    label = label.substring(0,35)+'...'
+                }
+                labels.push(label);
+                series.push(d[1]);
+            }  
+        });
         new Chartist.Bar('#chartcontainer'+id, {
             labels: labels,
             series: [series]
@@ -274,7 +285,22 @@ function createChart(id,bite,sort){
               }
           }
         });        
-    } else {
+    } else if (subtype=="pie") {
+
+        bite[0].bite.forEach(function(d,i){
+            if(i>0){
+                var label = d[0];
+                if(label.length>maxLength){
+                    maxLength = label.length;
+                }
+                if(label.length>40){
+                    label = label.substring(0,35)+'...'
+                }
+                labels.push(label);
+                series.push(d[1]);
+            }  
+        });
+
         var data = {
           labels: labels,
           series: series
@@ -302,7 +328,43 @@ function createChart(id,bite,sort){
         ];
 
         new Chartist.Pie('#chartcontainer'+id, data, options, responsiveOptions);        
-    }    
+    } else {
+        
+        var dataSetsLines = [];
+        bite.forEach(function(d){
+            console.log(d);
+            var data = d.bite.map(function(d,i){
+                if(i>0){
+                    return {'x':d[0].getTime(),'y':d[1]}
+                }
+            }).splice(1);
+            dataSetsLines.push({name:'Test',data:data});            
+        });
+
+        new Chartist.Line('#chartcontainer'+id, {
+            series: dataSetsLines
+        }, {
+          lineSmooth: Chartist.Interpolation.cardinal({
+            tension: 0
+          }),
+          showPoint: false,
+          axisY: {
+            type: Chartist.AutoScaleAxis,
+            showLabel: true,
+            showGrid: true,
+            low: 0,
+            ticks: [1, 10, 20, 30]
+          },
+          axisX: {
+            type: Chartist.AutoScaleAxis,
+            showLabel: true,
+            showGrid: true,
+            labelInterpolationFnc: function skipLabels(value, index) {
+                return index % 2  === 0 ? new Date(value).toISOString().slice(0,10) : null;
+            }
+          }
+        });        
+    }   
 }
 
 function createMap(id,bite,scale){

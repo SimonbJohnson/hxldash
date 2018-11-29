@@ -18,10 +18,10 @@
 		"chartID":["time0002/#date+event/0/#affected+infected+total/7","time0002/#date+event/0/#affected+killed+total/10"]
 		},
 		{"data":"https://docs.google.com/spreadsheets/d/e/2PACX-1vSrr9DRaC2fXzPdmOxLW-egSYtxmEp_RKoYGggt-zOKYXSx4RjPsM4EO19H7OJVX1esTtIoFvlKFWcn/pub?gid=1564028913&single=true&output=csv",
-		"chartID":["time0002/#date+event/0/#affected+infected+total/7","time0002/#date+event/0/#affected+killed+total/10"]
+		"chartID":["time0002/#date+event/0/#affected+killed+new/9","time0002/#date+event/0/#affected+infected+new+suspected/14"]
 		},						
 		{"data":"https://docs.google.com/spreadsheets/d/e/2PACX-1vSrr9DRaC2fXzPdmOxLW-egSYtxmEp_RKoYGggt-zOKYXSx4RjPsM4EO19H7OJVX1esTtIoFvlKFWcn/pub?gid=1564028913&single=true&output=csv",
-		"chartID":"chart0021/#adm2+health+name/4/#affected+confirmed+infected/6",
+		"chartID":"chart0021/#adm2+health+name/4/#affected+infected+total/7",
 		"sort":"descending"}
 	]
 }

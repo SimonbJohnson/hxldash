@@ -148,7 +148,6 @@ function createDropDowns(dataSets,filters,config){
         });
         unique.forEach(function(value){
             var label = value;
-            console.log(label.length);
             if(label.length>25){
                 label = label.substr(0,22)+'...';
             }
@@ -349,7 +348,6 @@ function createChart(id,bite,sort){
         
         var dataSetsLines = [];
         bite.forEach(function(d,j){
-            console.log(d);
             var data = d.bite.map(function(d,i){
                 if(i>0){
                     return {'x':d[0].getTime(),'y':d[1]}
@@ -389,7 +387,6 @@ function createChart(id,bite,sort){
 }
 
 function createMap(id,bite,scale){
-
     var bounds = [];
 
     id = id.substring(1);

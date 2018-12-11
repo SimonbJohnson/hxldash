@@ -1,13 +1,11 @@
 {
 	"title":"Mali - Who, what, where",
 	"subtext":"A map of the number of activities in the Education cluster in Mali.  <a href='https://docs.google.com/spreadsheets/d/1hpDmX7qrDnPS2T8VioueLFJ4IPjQY2WfmYYQctnHMIY/edit#gid=0'>Data source</a>.",
-	"grid":"grid1",
+	"grid":"grid5",
 	"charts":[
 		{"data":"https://proxy.hxlstandard.org/data.csv?filter01=select&select-query01-01=%23sector%3DEducation&url=https%3A%2F%2Fdocs.google.com%2Fspreadsheets%2Fd%2F1hpDmX7qrDnPS2T8VioueLFJ4IPjQY2WfmYYQctnHMIY%2Fedit%23gid%3D0",
 		"chartID":"map0001/#adm1+code/5"},
 		{"data":"https://proxy.hxlstandard.org/data.csv?filter01=select&select-query01-01=%23sector%3DEducation&url=https%3A%2F%2Fdocs.google.com%2Fspreadsheets%2Fd%2F1hpDmX7qrDnPS2T8VioueLFJ4IPjQY2WfmYYQctnHMIY%2Fedit%23gid%3D0",
-		"chartID":"chart0012/#org/1"},
-		{"data":"https://proxy.hxlstandard.org/data.csv?filter01=select&select-query01-01=%23sector%3DEducation&url=https%3A%2F%2Fdocs.google.com%2Fspreadsheets%2Fd%2F1hpDmX7qrDnPS2T8VioueLFJ4IPjQY2WfmYYQctnHMIY%2Fedit%23gid%3D0",
-		"chartID":"chart0003/#org+type/2"}
+		"chartID":"chart0012/#org/1"}
 	]
 }

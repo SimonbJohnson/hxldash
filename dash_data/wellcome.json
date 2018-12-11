@@ -1,0 +1,15 @@
+{
+	"title":"Wellcome Example",
+	"subtext":"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+	"filtersOn":false,
+	"filters":[],
+	"headlinefigures":0,
+	"headlinefigurecharts": [
+	],
+	"grid":"grid9",
+	"charts":[				
+		{"data":"https://proxy.hxlstandard.org/data.csv?filter01=replace-map&replace-map-url01=https%3A%2F%2Fdocs.google.com%2Fspreadsheets%2Fd%2F1hTE0U3V8x18homc5KxfA7IIrv1Y9F1oulhJt0Z4z3zo%2Fedit%23gid%3D0&filter02=merge&merge-url02=https%3A%2F%2Fdocs.google.com%2Fspreadsheets%2Fd%2F1GugpfyzridvfezFcDsl6dNlpZDqI8TQJw-Jx52obny8%2Fedit%23gid%3D0&merge-keys02=%23country%2Bname&merge-tags02=%23country%2Bcode&url=https%3A%2F%2Fdocs.google.com%2Fspreadsheets%2Fd%2F1eo0HCLg-kcRe3716DZbgSOA3dWBopJNcECeswFSFCYs%2Fedit%23gid%3D0&force=on",
+		"chartID":"map0001/#country+code/10",
+		"scale":"linear"}
+	]
+}

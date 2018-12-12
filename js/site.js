@@ -96,7 +96,7 @@ function createDashboard(dataSets,filterDataSets,config){
             chart.chartID.forEach(function(id){
                 bites.push(hxlBites.data(filterDataSets[chart.data]).reverse(id));
             });
-
+            console.log(bites);
             if(bites[0].type=='chart'){
                 if(chart.sort==undefined){
                     chart.sort = 'unsorted';
@@ -252,14 +252,18 @@ function createChart(id,bite,sort){
         variables.push(b.title.split(' by ')[0]);
     });
     var title = '';
-    variables.forEach(function(v,i){
-        if(i==0){
-            title = v
-        } else {
-            title +=', '+v;
-        }
-    });
-    title += ' by ' + bite[0].title.split(' by ')[1];
+    if(variables.length>1){
+        variables.forEach(function(v,i){
+            if(i==0){
+                title = v
+            } else {
+                title +=', '+v;
+            }
+        });
+        title += ' by ' + bite[0].title.split(' by ')[1];
+    } else {
+        title = bite[0].title;
+    }
     $(id).addClass('chartcontainer');
     $(id).html('<div class="titlecontainer"><p class="bitetitle">'+title+'</p></div><div id="chartcontainer'+id.substring(1)+'" class="chartelement"></div>');
     id = id.substring(1);

@@ -96,7 +96,7 @@ function createDashboard(dataSets,filterDataSets,config){
             chart.chartID.forEach(function(id){
                 bites.push(hxlBites.data(filterDataSets[chart.data]).reverse(id));
             });
-            
+
             if(bites[0].type=='chart'){
                 if(chart.sort==undefined){
                     chart.sort = 'unsorted';
@@ -203,7 +203,7 @@ function filterDataSets(dataSets,filters,config){
 }
 
 function createCrossTable(id,bite){
-    $(id).html(bite.title);
+    $(id).html('<p class="bitetitle">'+bite.title+'</p>');
     var html = hxlBites.render(id,bite);
 }
 

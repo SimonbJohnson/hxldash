@@ -1,0 +1,20 @@
+{
+	"title":"Example Config",
+	"subtext":"Template",
+	"filtersOn":false,
+	"filters":[],
+	"headlinefigures":0,
+	"headlinefigurecharts": [],
+	"grid":"grid#",
+	"charts":[
+		{"data":"",
+		"chartID":[]
+		},
+		{"data":"",
+		"chartID":[""]
+		},						
+		{"data":"",
+		"chartID":[""]
+		}
+	]
+}

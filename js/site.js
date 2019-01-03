@@ -96,7 +96,6 @@ function createDashboard(dataSets,filterDataSets,config){
             chart.chartID.forEach(function(id){
                 bites.push(hxlBites.data(filterDataSets[chart.data]).reverse(id));
             });
-            console.log(bites);
             if(bites[0].type=='chart'){
                 if(chart.sort==undefined){
                     chart.sort = 'unsorted';
@@ -214,7 +213,6 @@ function createHeadlineFigures(count,charts,dataSets){
             $(id).html('No Data');
         } else {
             var bite = hxlBites.data(dataSets[chart.data]).reverse(chart.chartID);
-            
             $('#headline').append('<div id="'+id.slice(1)+'" class="col-md-4 headlinefigure"></div>');
             createHeadLineFigure(id,bite);
         }

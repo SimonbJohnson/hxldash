@@ -5,22 +5,22 @@
 	"filters":[{"text":"Health Zone","tag":"#adm2"}],
 	"headlinefigures":3,
 	"headlinefigurecharts": [
-		{"data":"https://docs.google.com/spreadsheets/d/e/2PACX-1vSrr9DRaC2fXzPdmOxLW-egSYtxmEp_RKoYGggt-zOKYXSx4RjPsM4EO19H7OJVX1esTtIoFvlKFWcn/pub?gid=1564028913&single=true&output=csv",
+		{"data":"https://proxy.hxlstandard.org/data.json?filter01=sort&sort-tags01=%23date%2Bevent&sort-reverse01=on&url=https%3A%2F%2Fdocs.google.com%2Fspreadsheets%2Fd%2F1azJVeMiZMTJOjuKEFNETSlmaVDD0kQQXSHnhjEnEsfI%2Fedit%23gid%3D0",
 		"chartID":"text0012/#affected+confirmed+infected/5"},
-		{"data":"https://docs.google.com/spreadsheets/d/e/2PACX-1vSrr9DRaC2fXzPdmOxLW-egSYtxmEp_RKoYGggt-zOKYXSx4RjPsM4EO19H7OJVX1esTtIoFvlKFWcn/pub?gid=1564028913&single=true&output=csv",
+		{"data":"https://proxy.hxlstandard.org/data.json?filter01=sort&sort-tags01=%23date%2Bevent&sort-reverse01=on&url=https%3A%2F%2Fdocs.google.com%2Fspreadsheets%2Fd%2F1azJVeMiZMTJOjuKEFNETSlmaVDD0kQQXSHnhjEnEsfI%2Fedit%23gid%3D0",
 		"chartID":"text0012/#affected+killed+total/10"},
-		{"data":"https://docs.google.com/spreadsheets/d/e/2PACX-1vSrr9DRaC2fXzPdmOxLW-egSYtxmEp_RKoYGggt-zOKYXSx4RjPsM4EO19H7OJVX1esTtIoFvlKFWcn/pub?gid=1564028913&single=true&output=csv",
+		{"data":"https://proxy.hxlstandard.org/data.json?filter01=sort&sort-tags01=%23date%2Bevent&sort-reverse01=on&url=https%3A%2F%2Fdocs.google.com%2Fspreadsheets%2Fd%2F1azJVeMiZMTJOjuKEFNETSlmaVDD0kQQXSHnhjEnEsfI%2Fedit%23gid%3D0",
 		"chartID":"text0012/#affected+killed+new/9"}
 	],
 	"grid":"grid8",
 	"charts":[
-		{"data":"https://docs.google.com/spreadsheets/d/e/2PACX-1vSrr9DRaC2fXzPdmOxLW-egSYtxmEp_RKoYGggt-zOKYXSx4RjPsM4EO19H7OJVX1esTtIoFvlKFWcn/pub?gid=1564028913&single=true&output=csv",
+		{"data":"https://proxy.hxlstandard.org/data.json?filter01=sort&sort-tags01=%23date%2Bevent&sort-reverse01=on&url=https%3A%2F%2Fdocs.google.com%2Fspreadsheets%2Fd%2F1azJVeMiZMTJOjuKEFNETSlmaVDD0kQQXSHnhjEnEsfI%2Fedit%23gid%3D0",
 		"chartID":["time0002/#date+event/0/#affected+confirmed+infected/5","time0002/#date+event/0/#affected+killed+total/9"]
 		},
-		{"data":"https://docs.google.com/spreadsheets/d/e/2PACX-1vSrr9DRaC2fXzPdmOxLW-egSYtxmEp_RKoYGggt-zOKYXSx4RjPsM4EO19H7OJVX1esTtIoFvlKFWcn/pub?gid=1564028913&single=true&output=csv",
-		"chartID":["time0002/#date+event/0/#affected+killed+new/11","time0002/#date+event/0/#affected+infected+new+suspected/14"]
+		{"data":"https://proxy.hxlstandard.org/data.json?filter01=sort&sort-tags01=%23date%2Bevent&sort-reverse01=on&url=https%3A%2F%2Fdocs.google.com%2Fspreadsheets%2Fd%2F1azJVeMiZMTJOjuKEFNETSlmaVDD0kQQXSHnhjEnEsfI%2Fedit%23gid%3D0",
+		"chartID":["time0002/#date+event/0/#affected+killed+new/11","time0002/#date+event/0/#affected+confirmed+infected+new/17"]
 		},						
-		{"data":"https://docs.google.com/spreadsheets/d/e/2PACX-1vSrr9DRaC2fXzPdmOxLW-egSYtxmEp_RKoYGggt-zOKYXSx4RjPsM4EO19H7OJVX1esTtIoFvlKFWcn/pub?gid=1564028913&single=true&output=csv",
+		{"data":"https://proxy.hxlstandard.org/data.json?filter01=sort&sort-tags01=%23date%2Bevent&sort-reverse01=on&url=https%3A%2F%2Fdocs.google.com%2Fspreadsheets%2Fd%2F1azJVeMiZMTJOjuKEFNETSlmaVDD0kQQXSHnhjEnEsfI%2Fedit%23gid%3D0",
 		"chartID":"chart0021/#adm2+health+name/4/#affected+infected+total/7",
 		"sort":"descending"}
 	]

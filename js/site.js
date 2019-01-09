@@ -35,7 +35,17 @@ function loadData(config){
                 chart.data = index;
             }
         });
-    }  
+    }
+
+    if('latestdate' in config){
+        var index = dataSets.indexOf(config.latestdate.data);
+        if(index==-1){
+            dataSets.push(config.latestdate.data);
+            config.latestdate.data = dataSets.length-1;
+        } else {
+            config.latestdate.data = index;
+        }
+    }
 
     var dataSetLoaded=0;
     dataSets.forEach(function(dataSet,i){
@@ -73,6 +83,10 @@ function createDashboard(dataSets,filterDataSets,config){
 
     $('#title').html('<h2>'+config.title+'</h2>');
     $('#description').html('<p>'+config.subtext+'</p>');
+    if('latestdate' in config){
+        var text = "Last Update: "+getLastDate(config,dataSets);
+        $('#update').html(text);
+    }
     if('headlinefigures' in config && config.headlinefigures>0){
         createHeadlineFigures(config.headlinefigures,config.headlinefigurecharts,filterDataSets);
     }
@@ -113,6 +127,32 @@ function createDashboard(dataSets,filterDataSets,config){
             }
         }        
     });
+}
+
+function getLastDate(config,dataSets){
+    var tag = config.latestdate.tag;
+    var dataset = dataSets[config.latestdate.data];
+    var found = false
+    dataset[1].forEach(function(d,i){
+        if(d==tag){
+            found = i
+        }
+    });
+    var values = []
+    if(found!==false){
+        dataset.forEach(function(row,i){
+            if(i>1){
+                values.push(row[found]);
+            }
+        });
+        values.sort();
+        values.reverse();
+        return values[0];
+    }
+    else {
+        return "No date given"
+    }
+
 }
 
 function createFilterBar(dataSets,filters,config){

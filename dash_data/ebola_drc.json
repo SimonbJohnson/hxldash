@@ -3,8 +3,9 @@
 	"subtext":"Deaths and cases from the Ebola outbreak in North Kivu and Ituri. Data filtered for latest ministry of health report.  Data provided by <a href=\"https://data.humdata.org/dataset/ebola-cases-and-deaths-drc-north-kivu\">HDX</a>.",
 	"filtersOn":true,
 	"filters":[{"text":"Health Zone","tag":"#adm2"}],
+	"latestdate":{"tag":"#date+event","data":"https://proxy.hxlstandard.org/data.json?filter01=sort&sort-tags01=%23date%2Bevent&sort-reverse01=on&url=https%3A%2F%2Fdocs.google.com%2Fspreadsheets%2Fd%2F1azJVeMiZMTJOjuKEFNETSlmaVDD0kQQXSHnhjEnEsfI%2Fedit%23gid%3D0"},
 	"headlinefigures":3,
-	"headlinefigurecharts": [
+	"headlinefigurecharts":[
 		{"data":"https://proxy.hxlstandard.org/data.json?filter01=sort&sort-tags01=%23date%2Bevent&sort-reverse01=on&url=https%3A%2F%2Fdocs.google.com%2Fspreadsheets%2Fd%2F1azJVeMiZMTJOjuKEFNETSlmaVDD0kQQXSHnhjEnEsfI%2Fedit%23gid%3D0",
 		"chartID":"text0012/#affected+confirmed+infected/5"},
 		{"data":"https://proxy.hxlstandard.org/data.json?filter01=sort&sort-tags01=%23date%2Bevent&sort-reverse01=on&url=https%3A%2F%2Fdocs.google.com%2Fspreadsheets%2Fd%2F1azJVeMiZMTJOjuKEFNETSlmaVDD0kQQXSHnhjEnEsfI%2Fedit%23gid%3D0",

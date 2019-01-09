@@ -67,8 +67,13 @@ table {
 }
 
 #description {
+	margin-bottom:0px;
+}
+
+#update {
 	margin-bottom:20px;
 }
+
 
 @media only screen and (min-width: 600px){
 	.filtertext {

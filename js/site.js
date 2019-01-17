@@ -268,6 +268,29 @@ function createHeadLineFigure(id,bite){
     $(id+'number').html(number);
 }
 
+function tooltip(meta,value){
+    return niceNumber(value);
+}
+
+function niceNumber(num) {
+  min = 1e3;
+  // Alter numbers larger than 1k
+  if (num >= min) {
+    var units = ["k", "M", "B", "T"];
+    
+    var order = Math.floor(Math.log(num) / Math.log(1000));
+
+    var unitname = units[(order - 1)];
+    var num = Math.floor(num*10 / (1000 ** order))/10;
+    
+    // output number remainder + unitname
+    return num + unitname
+  }
+  
+  // return formatted original number
+  return num.toLocaleString()
+}
+
 function createChart(id,bite,sort){
 
     var labels = [];
@@ -341,7 +364,10 @@ function createChart(id,bite,sort){
                 }
                 return index % divide === 0 ? value : null;
               }
-          }
+          },
+          plugins: [
+            Chartist.plugins.tooltip({appendToBody:true,tooltipFnc:tooltip})
+            ]
         });        
     } else if (subtype=="pie") {
 
@@ -422,7 +448,8 @@ function createChart(id,bite,sort){
             }
           },
           plugins: [
-            Chartist.plugins.legend()
+            Chartist.plugins.legend(),
+            Chartist.plugins.tooltip()
             ]
         });        
     }   
@@ -508,9 +535,9 @@ function createMap(id,bite,scale){
     legend.addTo(map);
 
 
-    loadGeoms(bite.geom_url);
+    loadGeoms(bite.geom_url,bite.geom_attribute);
 
-    function loadGeoms(urls){
+    function loadGeoms(urls,geom_attributes){
         var total = urls.length;
         $('.infohover').html('Loading Geoms: '+total + ' to go');
         $.ajax({
@@ -525,12 +552,12 @@ function createMap(id,bite,scale){
                 }              
                 var layer = L.geoJson(geom,
                     {
-                        style: style,
-                        onEachFeature: onEachFeature
+                        style: styleClosure(geom_attributes[0]),
+                        onEachFeature: onEachFeatureClosure(geom_attributes[0])
                     }
                 ).addTo(map);
                 if(urls.length>1){
-                    loadGeoms(urls.slice(1));
+                    loadGeoms(urls.slice(1),geom_attributes.slice(1));
                 } else {
                     $('.infohover').html('Hover for value');
                     fitBounds();
@@ -563,26 +590,33 @@ function createMap(id,bite,scale){
         }
     }
 
-    function onEachFeature(feature, layer) {
-        var featureCode = feature.properties[bite.geom_attribute];
-        if(!isNaN(bite.lookup[featureCode])){
-          bounds.push(layer.getBounds());
+    function onEachFeatureClosure(geom_attribute){
+        console.log(geom_attribute);
+        return function onEachFeature(feature, layer) {
+            console.log(feature.properties);
+            var featureCode = feature.properties[geom_attribute];
+            console.log(featureCode);
+            if(!isNaN(bite.lookup[featureCode])){
+              bounds.push(layer.getBounds());
+            }
+            layer.on({
+                mouseover: highlightFeature,
+                mouseout: resetHighlight,
+            });
         }
-        layer.on({
-            mouseover: highlightFeature,
-            mouseout: resetHighlight,
-        });
     }
 
-    function style(feature) {
-        return {
-            className: getClass(feature.properties[bite.geom_attribute]),
-            weight: 1,
-            opacity: 1,
-            color: '#cccccc',
-            dashArray: '3',
-            fillOpacity: 0.7
-        };
+    function styleClosure(geom_attribute){
+        return function style(feature) {
+            return {
+                className: getClass(feature.properties[geom_attribute]),
+                weight: 1,
+                opacity: 1,
+                color: '#cccccc',
+                dashArray: '3',
+                fillOpacity: 0.7
+            };
+        }
     }
 
     function highlightFeature(e) {

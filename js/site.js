@@ -268,6 +268,29 @@ function createHeadLineFigure(id,bite){
     $(id+'number').html(number);
 }
 
+function tooltip(meta,value){
+    return niceNumber(value);
+}
+
+function niceNumber(num) {
+  min = 1e3;
+  // Alter numbers larger than 1k
+  if (num >= min) {
+    var units = ["k", "M", "B", "T"];
+    
+    var order = Math.floor(Math.log(num) / Math.log(1000));
+
+    var unitname = units[(order - 1)];
+    var num = Math.floor(num*10 / (1000 ** order))/10;
+    
+    // output number remainder + unitname
+    return num + unitname
+  }
+  
+  // return formatted original number
+  return num.toLocaleString()
+}
+
 function createChart(id,bite,sort){
 
     var labels = [];
@@ -341,7 +364,10 @@ function createChart(id,bite,sort){
                 }
                 return index % divide === 0 ? value : null;
               }
-          }
+          },
+          plugins: [
+            Chartist.plugins.tooltip({appendToBody:true,tooltipFnc:tooltip})
+            ]
         });        
     } else if (subtype=="pie") {
 
@@ -422,7 +448,8 @@ function createChart(id,bite,sort){
             }
           },
           plugins: [
-            Chartist.plugins.legend()
+            Chartist.plugins.legend(),
+            Chartist.plugins.tooltip()
             ]
         });        
     }   

@@ -535,9 +535,9 @@ function createMap(id,bite,scale){
     legend.addTo(map);
 
 
-    loadGeoms(bite.geom_url);
+    loadGeoms(bite.geom_url,bite.geom_attribute);
 
-    function loadGeoms(urls){
+    function loadGeoms(urls,geom_attributes){
         var total = urls.length;
         $('.infohover').html('Loading Geoms: '+total + ' to go');
         $.ajax({
@@ -552,12 +552,12 @@ function createMap(id,bite,scale){
                 }              
                 var layer = L.geoJson(geom,
                     {
-                        style: style,
-                        onEachFeature: onEachFeature
+                        style: styleClosure(geom_attributes[0]),
+                        onEachFeature: onEachFeatureClosure(geom_attributes[0])
                     }
                 ).addTo(map);
                 if(urls.length>1){
-                    loadGeoms(urls.slice(1));
+                    loadGeoms(urls.slice(1),geom_attributes.slice(1));
                 } else {
                     $('.infohover').html('Hover for value');
                     fitBounds();
@@ -590,26 +590,33 @@ function createMap(id,bite,scale){
         }
     }
 
-    function onEachFeature(feature, layer) {
-        var featureCode = feature.properties[bite.geom_attribute];
-        if(!isNaN(bite.lookup[featureCode])){
-          bounds.push(layer.getBounds());
+    function onEachFeatureClosure(geom_attribute){
+        console.log(geom_attribute);
+        return function onEachFeature(feature, layer) {
+            console.log(feature.properties);
+            var featureCode = feature.properties[geom_attribute];
+            console.log(featureCode);
+            if(!isNaN(bite.lookup[featureCode])){
+              bounds.push(layer.getBounds());
+            }
+            layer.on({
+                mouseover: highlightFeature,
+                mouseout: resetHighlight,
+            });
         }
-        layer.on({
-            mouseover: highlightFeature,
-            mouseout: resetHighlight,
-        });
     }
 
-    function style(feature) {
-        return {
-            className: getClass(feature.properties[bite.geom_attribute]),
-            weight: 1,
-            opacity: 1,
-            color: '#cccccc',
-            dashArray: '3',
-            fillOpacity: 0.7
-        };
+    function styleClosure(geom_attribute){
+        return function style(feature) {
+            return {
+                className: getClass(feature.properties[geom_attribute]),
+                weight: 1,
+                opacity: 1,
+                color: '#cccccc',
+                dashArray: '3',
+                fillOpacity: 0.7
+            };
+        }
     }
 
     function highlightFeature(e) {

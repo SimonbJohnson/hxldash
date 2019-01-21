@@ -493,7 +493,7 @@ function createMap(id,bite,scale){
     };
 
     // method that we will use to update the control based on feature properties passed
-    info.update = function (id) {
+    info.update = function (name,id) {
         value = 'No Data';
         bite.bite.forEach(function(d){
                     if(d[0]==id){
@@ -502,7 +502,7 @@ function createMap(id,bite,scale){
                 }); 
                                
         this._div.innerHTML = (id ?
-            '<b>Value:</b> ' + value
+            '<b>'+name+':</b> ' + value
             : 'Hover for value');
     };
 
@@ -533,11 +533,11 @@ function createMap(id,bite,scale){
     };
 
     legend.addTo(map);
+    console.log(bite);
 
+    loadGeoms(bite.geom_url,bite.geom_attribute,bite.name_attribute);
 
-    loadGeoms(bite.geom_url,bite.geom_attribute);
-
-    function loadGeoms(urls,geom_attributes){
+    function loadGeoms(urls,geom_attributes,name_attributes){
         var total = urls.length;
         $('.infohover').html('Loading Geoms: '+total + ' to go');
         $.ajax({
@@ -553,11 +553,11 @@ function createMap(id,bite,scale){
                 var layer = L.geoJson(geom,
                     {
                         style: styleClosure(geom_attributes[0]),
-                        onEachFeature: onEachFeatureClosure(geom_attributes[0])
+                        onEachFeature: onEachFeatureClosure(geom_attributes[0],name_attributes[0])
                     }
                 ).addTo(map);
                 if(urls.length>1){
-                    loadGeoms(urls.slice(1),geom_attributes.slice(1));
+                    loadGeoms(urls.slice(1),geom_attributes.slice(1),name_attributes.slice(1));
                 } else {
                     $('.infohover').html('Hover for value');
                     fitBounds();
@@ -590,12 +590,9 @@ function createMap(id,bite,scale){
         }
     }
 
-    function onEachFeatureClosure(geom_attribute){
-        console.log(geom_attribute);
+    function onEachFeatureClosure(geom_attribute,name_attribute){
         return function onEachFeature(feature, layer) {
-            console.log(feature.properties);
             var featureCode = feature.properties[geom_attribute];
-            console.log(featureCode);
             if(!isNaN(bite.lookup[featureCode])){
               bounds.push(layer.getBounds());
             }
@@ -604,6 +601,15 @@ function createMap(id,bite,scale){
                 mouseout: resetHighlight,
             });
         }
+
+        function highlightFeature(e) {
+            info.update(e.target.feature.properties[name_attribute],e.target.feature.properties[geom_attribute]);
+        }
+
+        function resetHighlight(e) {
+            info.update();
+        }   
+
     }
 
     function styleClosure(geom_attribute){
@@ -617,15 +623,7 @@ function createMap(id,bite,scale){
                 fillOpacity: 0.7
             };
         }
-    }
-
-    function highlightFeature(e) {
-        info.update(e.target.feature.properties[bite.geom_attribute]);
-    }
-
-    function resetHighlight(e) {
-        info.update();
-    }    
+    } 
 
     function getClass(id){
         var value = 0;

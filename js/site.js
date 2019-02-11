@@ -329,7 +329,7 @@ function createChart(id,bite,sort){
     $(id).html('<div class="titlecontainer"><p class="bitetitle">'+title+'</p></div><div id="chartcontainer'+id.substring(1)+'" class="chartelement"></div>');
     id = id.substring(1);
     $('#chartcontainer'+id).height($('#'+id).height()-55);
-    if(subtype=="row"){
+    if(subtype=="row" || subtype=="pie"){
         bite[0].bite.forEach(function(d,i){
             if(i>0){
                 var label = d[0];

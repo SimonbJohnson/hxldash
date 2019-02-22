@@ -59,7 +59,7 @@
         });
       }
 
-      on('mouseover', tooltipSelector, function (event) {
+      on('mouseover', null, function (event) {
         var $point = event.target;
         var tooltipText = '';
 
@@ -121,7 +121,7 @@
         }
       });
 
-      on('mouseout', tooltipSelector, function () {
+      on('mouseout', null, function () {
         hide($toolTip);
       });
 

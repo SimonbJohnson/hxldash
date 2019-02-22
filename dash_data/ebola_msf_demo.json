@@ -1,0 +1,18 @@
+{
+	"title":"",
+	"subtext":"",
+	"filtersOn":false,
+	"filters":[],
+	"headlinefigures":0,
+	"headlinefigurecharts":[
+	],
+	"grid":"grid1",
+	"charts":[				
+		{"data":"https://docs.google.com/spreadsheets/d/1R9zfMTk7SQB8VoEp4XK0xAWtlsQcHgEvYiswZsj9YA4/edit#gid=0",
+		"chartID":"map0001/#adm1+code/3"},
+		{"data":"https://docs.google.com/spreadsheets/d/1R9zfMTk7SQB8VoEp4XK0xAWtlsQcHgEvYiswZsj9YA4/edit#gid=0",
+		"chartID":"chart0006/#country/1"},
+		{"data":"https://docs.google.com/spreadsheets/d/1R9zfMTk7SQB8VoEp4XK0xAWtlsQcHgEvYiswZsj9YA4/edit#gid=0",
+		"chartID":"chart0017/#status/0"}
+	]
+}

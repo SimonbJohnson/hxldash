@@ -3,6 +3,10 @@
     color: #000;
 }
 
+.ct-point {
+    stroke-width: 4px;
+}
+
 p {
     font-size:15px;
 }

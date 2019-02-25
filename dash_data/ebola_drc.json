@@ -3,26 +3,26 @@
 	"subtext":"Deaths and cases from the Ebola outbreak in North Kivu and Ituri. Cases were re-classified by the Ministry of Health in the period between 12-11-2018 to 14-11-2018, meaning any new cases in that period could be old cases but were re-classified as a different health zone.  Data provided by <a href=\"https://data.humdata.org/dataset/ebola-cases-and-deaths-drc-north-kivu\">HDX</a>.",
 	"filtersOn":true,
 	"filters":[{"text":"Health Zone","tag":"#adm2"}],
-	"latestdate":{"tag":"#date+report","data":"https://proxy.hxlstandard.org/data.json?filter01=sort&sort-tags01=%23date%2Bevent&sort-reverse01=on&url=https%3A%2F%2Fdocs.google.com%2Fspreadsheets%2Fd%2F1azJVeMiZMTJOjuKEFNETSlmaVDD0kQQXSHnhjEnEsfI%2Fedit%23gid%3D0"},
+	"latestdate":{"tag":"#date+report","data":"https://proxy.hxlstandard.org/data.json?filter01=sort&sort-tags01=%23date%2Bevent&sort-reverse01=on&url=https%3A%2F%2Fdocs.google.com%2Fspreadsheets%2Fd%2Fe%2F2PACX-1vSrr9DRaC2fXzPdmOxLW-egSYtxmEp_RKoYGggt-zOKYXSx4RjPsM4EO19H7OJVX1esTtIoFvlKFWcn%2Fpub%3Fgid%3D1564028913%26single%3Dtrue%26output%3Dcsv"},
 	"headlinefigures":3,
 	"headlinefigurecharts":[
-		{"data":"https://proxy.hxlstandard.org/data.json?filter01=sort&sort-tags01=%23date%2Bevent&sort-reverse01=on&url=https%3A%2F%2Fdocs.google.com%2Fspreadsheets%2Fd%2F1azJVeMiZMTJOjuKEFNETSlmaVDD0kQQXSHnhjEnEsfI%2Fedit%23gid%3D0",
+		{"data":"https://proxy.hxlstandard.org/data.json?filter01=sort&sort-tags01=%23date%2Bevent&sort-reverse01=on&url=https%3A%2F%2Fdocs.google.com%2Fspreadsheets%2Fd%2Fe%2F2PACX-1vSrr9DRaC2fXzPdmOxLW-egSYtxmEp_RKoYGggt-zOKYXSx4RjPsM4EO19H7OJVX1esTtIoFvlKFWcn%2Fpub%3Fgid%3D1564028913%26single%3Dtrue%26output%3Dcsv",
 		"chartID":"text0012/#affected+confirmed+infected/5"},
-		{"data":"https://proxy.hxlstandard.org/data.json?filter01=sort&sort-tags01=%23date%2Bevent&sort-reverse01=on&url=https%3A%2F%2Fdocs.google.com%2Fspreadsheets%2Fd%2F1azJVeMiZMTJOjuKEFNETSlmaVDD0kQQXSHnhjEnEsfI%2Fedit%23gid%3D0",
+		{"data":"https://proxy.hxlstandard.org/data.json?filter01=sort&sort-tags01=%23date%2Bevent&sort-reverse01=on&url=https%3A%2F%2Fdocs.google.com%2Fspreadsheets%2Fd%2Fe%2F2PACX-1vSrr9DRaC2fXzPdmOxLW-egSYtxmEp_RKoYGggt-zOKYXSx4RjPsM4EO19H7OJVX1esTtIoFvlKFWcn%2Fpub%3Fgid%3D1564028913%26single%3Dtrue%26output%3Dcsv",
 		"chartID":"text0012/#affected+killed+total/10"},
-		{"data":"https://proxy.hxlstandard.org/data.json?filter01=sort&sort-tags01=%23date%2Bevent&sort-reverse01=on&url=https%3A%2F%2Fdocs.google.com%2Fspreadsheets%2Fd%2F1azJVeMiZMTJOjuKEFNETSlmaVDD0kQQXSHnhjEnEsfI%2Fedit%23gid%3D0",
+		{"data":"https://proxy.hxlstandard.org/data.json?filter01=sort&sort-tags01=%23date%2Bevent&sort-reverse01=on&url=https%3A%2F%2Fdocs.google.com%2Fspreadsheets%2Fd%2Fe%2F2PACX-1vSrr9DRaC2fXzPdmOxLW-egSYtxmEp_RKoYGggt-zOKYXSx4RjPsM4EO19H7OJVX1esTtIoFvlKFWcn%2Fpub%3Fgid%3D1564028913%26single%3Dtrue%26output%3Dcsv",
 		"chartID":"text0012/#affected+killed+new/9"}
 	],
 	"grid":"grid8",
 	"charts":[
-		{"data":"https://proxy.hxlstandard.org/data.json?filter01=sort&sort-tags01=%23date%2Bevent&sort-reverse01=on&url=https%3A%2F%2Fdocs.google.com%2Fspreadsheets%2Fd%2F1azJVeMiZMTJOjuKEFNETSlmaVDD0kQQXSHnhjEnEsfI%2Fedit%23gid%3D0",
+		{"data":"https://proxy.hxlstandard.org/data.json?filter01=sort&sort-tags01=%23date%2Bevent&sort-reverse01=on&url=https%3A%2F%2Fdocs.google.com%2Fspreadsheets%2Fd%2Fe%2F2PACX-1vSrr9DRaC2fXzPdmOxLW-egSYtxmEp_RKoYGggt-zOKYXSx4RjPsM4EO19H7OJVX1esTtIoFvlKFWcn%2Fpub%3Fgid%3D1564028913%26single%3Dtrue%26output%3Dcsv",
 		"chartID":["time0002/#date+event/0/#affected+confirmed+infected/5","time0002/#date+event/0/#affected+killed+total/9"]
 		},
-		{"data":"https://proxy.hxlstandard.org/data.json?filter01=sort&sort-tags01=%23date%2Bevent&sort-reverse01=on&url=https%3A%2F%2Fdocs.google.com%2Fspreadsheets%2Fd%2F1azJVeMiZMTJOjuKEFNETSlmaVDD0kQQXSHnhjEnEsfI%2Fedit%23gid%3D0",
-		"chartID":["time0002/#date+event/0/#affected+killed+new/11","time0002/#date+event/0/#affected+confirmed+infected+new/23"]
+		{"data":"https://proxy.hxlstandard.org/data.json?filter01=sort&sort-tags01=%23date%2Bevent&sort-reverse01=on&url=https%3A%2F%2Fdocs.google.com%2Fspreadsheets%2Fd%2Fe%2F2PACX-1vSrr9DRaC2fXzPdmOxLW-egSYtxmEp_RKoYGggt-zOKYXSx4RjPsM4EO19H7OJVX1esTtIoFvlKFWcn%2Fpub%3Fgid%3D1564028913%26single%3Dtrue%26output%3Dcsv",
+		"chartID":["time0002/#date+event/0/#affected+killed+new/11","time0002/#date+event/0/#affected+confirmed+infected/16"]
 		},						
-		{"data":"https://proxy.hxlstandard.org/data.json?filter01=sort&sort-tags01=%23date%2Bevent&sort-reverse01=on&url=https%3A%2F%2Fdocs.google.com%2Fspreadsheets%2Fd%2F1azJVeMiZMTJOjuKEFNETSlmaVDD0kQQXSHnhjEnEsfI%2Fedit%23gid%3D0",
-		"chartID":"chart0021/#adm2+health+name/4/#affected+infected+total/7",
+		{"data":"https://proxy.hxlstandard.org/data.json?filter01=sort&sort-tags01=%23date%2Bevent&sort-reverse01=on&url=https%3A%2F%2Fdocs.google.com%2Fspreadsheets%2Fd%2Fe%2F2PACX-1vSrr9DRaC2fXzPdmOxLW-egSYtxmEp_RKoYGggt-zOKYXSx4RjPsM4EO19H7OJVX1esTtIoFvlKFWcn%2Fpub%3Fgid%3D1564028913%26single%3Dtrue%26output%3Dcsv",
+		"chartID":"chart0021/#adm2+health+name/4/#affected+confirmed+infected/5",
 		"sort":"descending"}
 	]
 }

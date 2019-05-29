@@ -114,7 +114,13 @@ function createDashboard(dataSets,filterDataSets,config){
                 if(chart.sort==undefined){
                     chart.sort = 'unsorted';
                 }
-                createChart(id,bites,chart.sort);
+                if(chart.smoothing==undefined){
+                    chart.smoothing = 0;
+                }
+                if(chart.title==undefined){
+                    chart.title = '';
+                }                
+                createChart(id,bites,chart.sort,chart.smoothing,chart.title);
             }
             if(bites[0].type=='crosstable'){
                 createCrossTable(id,bites[0]);
@@ -252,6 +258,7 @@ function createHeadlineFigures(count,charts,dataSets){
         if(dataSets[chart.data].length==0){
             $(id).html('No Data');
         } else {
+            console.log(dataSets);
             var bite = hxlBites.data(dataSets[chart.data]).reverse(chart.chartID);
             $('#headline').append('<div id="'+id.slice(1)+'" class="col-md-4 headlinefigure"></div>');
             createHeadLineFigure(id,bite);
@@ -301,7 +308,21 @@ function niceNumber(num) {
   return num
 }
 
-function createChart(id,bite,sort){
+function smooth(data){
+    let output = [];
+    data.forEach(function(d,i){
+        if(i>6){
+            let value = 0;
+            for(j=0;j<7;j++){
+                value += data[i-7+j][1];
+            }
+            output.push([data[i][0],value/7]);
+        }
+    });
+    return output;
+}
+
+function createChart(id,bite,sort,smoothing,title){
 
     var labels = [];
     var series = [];
@@ -314,6 +335,16 @@ function createChart(id,bite,sort){
         });
         bite[0].bite.unshift(topline);
     }
+    console.log(smoothing);
+    if(smoothing>0){
+        bite.forEach(function(b){
+            var topline = bite[0].bite.shift();
+            console.log(b.bite);
+            b.bite = smooth(b.bite);
+            console.log(b.bite);
+            b.bite.unshift(topline);
+        });
+    }
     var offset = 70;
     if(maxLength>30){
         offset = 120
@@ -322,18 +353,19 @@ function createChart(id,bite,sort){
     bite.forEach(function(b){
         variables.push(b.title.split(' by ')[0]);
     });
-    var title = '';
-    if(variables.length>1){
-        variables.forEach(function(v,i){
-            if(i==0){
-                title = v
-            } else {
-                title +=', '+v;
-            }
-        });
-        title += ' by ' + bite[0].title.split(' by ')[1];
-    } else {
-        title = bite[0].title;
+    if(title==''){
+        if(variables.length>1){
+            variables.forEach(function(v,i){
+                if(i==0){
+                    title = v
+                } else {
+                    title +=', '+v;
+                }
+            });
+            title += ' by ' + bite[0].title.split(' by ')[1];
+        } else {
+            title = bite[0].title;
+        }
     }
     $(id).addClass('chartcontainer');
     $(id).html('<div class="titlecontainer"><p class="bitetitle">'+title+'</p></div><div id="chartcontainer'+id.substring(1)+'" class="chartelement"></div>');

@@ -19,7 +19,9 @@
 		"chartID":["time0002/#date+event/0/#affected+confirmed+infected/5","time0002/#date+event/0/#affected+killed+total/9"]
 		},
 		{"data":"https://proxy.hxlstandard.org/data.json?filter01=sort&sort-tags01=%23date%2Bevent&sort-reverse01=on&filter02=add&add-tag02=%23x_time%2Bmonth&add-value02=%7B%7B%23date%2Breport%7D%7D&add-header02=Month&filter03=replace&replace-pattern03=%28%5Cd%7B4%7D-%5Cd%7B2%7D%29-.%2A&replace-regex03=on&replace-value03=%5C1&replace-tags03=%23x_time%2Bmonth&force=on&url=https%3A%2F%2Fdocs.google.com%2Fspreadsheets%2Fd%2Fe%2F2PACX-1vSrr9DRaC2fXzPdmOxLW-egSYtxmEp_RKoYGggt-zOKYXSx4RjPsM4EO19H7OJVX1esTtIoFvlKFWcn%2Fpub%3Fgid%3D1564028913%26single%3Dtrue%26output%3Dcsv",
-		"chartID":["time0002/#date+event/0/#affected+confirmed+infected/16"]
+		"chartID":["time0002/#date+event/0/#affected+confirmed+infected/16"],
+		"smoothing":7,
+		"title":"Change in confirmed cases 7 day moving average"
 		},						
 		{"data":"https://proxy.hxlstandard.org/data.json?filter01=sort&sort-tags01=%23date%2Bevent&sort-reverse01=on&filter02=add&add-tag02=%23x_time%2Bmonth&add-value02=%7B%7B%23date%2Breport%7D%7D&add-header02=Month&filter03=replace&replace-pattern03=%28%5Cd%7B4%7D-%5Cd%7B2%7D%29-.%2A&replace-regex03=on&replace-value03=%5C1&replace-tags03=%23x_time%2Bmonth&force=on&url=https%3A%2F%2Fdocs.google.com%2Fspreadsheets%2Fd%2Fe%2F2PACX-1vSrr9DRaC2fXzPdmOxLW-egSYtxmEp_RKoYGggt-zOKYXSx4RjPsM4EO19H7OJVX1esTtIoFvlKFWcn%2Fpub%3Fgid%3D1564028913%26single%3Dtrue%26output%3Dcsv",
 		"chartID":"chart0021/#adm2+health+name/4/#affected+confirmed+infected/5",

@@ -108,5 +108,25 @@ hxlBites._textBites = [
 'variables': ['header(crisis)', 'first(crisis)' ,'firstCount(crisis)', 'second(crisis)' ,'secondCount(crisis)'],
 'phrase': 'The largest {1} is {2} with {3} reports followed by {4} with {5} reports.',
 'priority': 8,
+},
+{
+'id':'text0012',	
+'type':'text',
+'subType':'topline figure',
+'ingredients':[{'name':'value','tags':['#affected','#population','#reached','#value']}],
+'criteria':['value > 0'],
+'variables': ['sum(value)','header(value)'],
+'phrase': '{2}:{1}',
+'priority': 8,
+},
+{
+'id':'text0013',	
+'type':'text',
+'subType':'topline figure',
+'ingredients':[{'name':'countries','tags':['#country-code']}],
+'criteria':['countries > 0'],
+'variables': ['count(countries)'],
+'phrase': 'Countries:{1}',
+'priority': 8,
 }
 ];

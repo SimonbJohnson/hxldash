@@ -1,55 +1,133 @@
 let hxlBites = {
 
+	//variable data is stored in
 	_data: [],
-	_headers: {},
+
+	//variable unfiltered timeseries data stored in
+	_fullData: [],
+
+	//identifying whether a dataset is a timeseries
 	timeSeries: false,
 	timeSeriesFilter: '',
 	timeSeriesFilterHeader: '',
 
+	//function to set data and check is data is a timeseries
 	data: function(data){
 		this._data = data;
+		this._fullData = data;
 		this._data = this.checkTimeSeriesAndFilter(data);
 		return this;
 	},
 
-	checkTimeSeriesAndFilter(data){
+	//check if data is a timeseries
+	checkTimeSeriesAndFilter: function(data){
 		let self = this;
-		let matches = self._getIngredientValues({'name':'#date','tags':['#date-update']},self._data);
+		
+		//get values for tags that match
+		let matches = self._getIngredientValues({'name':'#date','tags':['#date-update','#date-report','#date-start','#date-occurred']},self._data);
 		let timeSeries = true;
+		
+		//tracking which column to filter on and by what value
 		let filterValue='';
 		let filterHeader = '';
 		let filterCol = 0;
+		
+		//check if any date columns
 		if(matches.length==0){
 			timeSeries = false;
+		} else {
+			[timeSeries,filterValue,filterHeader,filterCol] = self._checkColumnMatchesForTimeSeries(matches);
 		}
-		matches.forEach(function(match){
-			let keyValues = self._varFuncKeyValue(match);
-			let length = keyValues.length;
-			if(keyValues[length-1].value<3){
-				timeSeries = false;
-			} else {
-				filterValue = keyValues[length-1].key;
-				filterCol = match.col;
-				filterHeader = match.header;
-			}
-		});
+		console.log(timeSeries);
+		//if time series data is found filter for last date
 		if(timeSeries){
 			let headers = data.slice(0, 2);
 			data = data.slice(2,data.length);
 			data = self._filterData(data,filterCol,filterValue);
 			data = headers.concat(data);
 		}
+		//global time series 
 		self.timeSeries = timeSeries;
 		self.timeSeriesFilter = filterValue;
 		self.timeSeriesFilterHeader = filterHeader;
 		return data;
 	},
 
+	//loops through matches and returns first timeseries
+	_checkColumnMatchesForTimeSeries: function(matches){
+		let self = this;
+		timeSeries = true
+		let filterValue='';
+		let filterHeader = '';
+		let filterCol = 0;
+
+
+		//loop through every match
+		matches.forEach(function(match){
+
+			//keyvalue of date plus count of occurences
+			let keyValues = self._varFuncKeyValue(match);
+			//check there enough unique values to be a time series
+			let length = keyValues.length;
+			var lastValue = keyValues[length-1].value;
+			// lastvalue>3
+			//sort alphabetically (assumes date in YYYY-MM-DD format currently)
+			keyValues = keyValues.sort(function(a,b){
+				if (a.key < b.key)
+    				return -1;
+  				if (a.key > b.key)
+    				return 1;
+  				return 0;
+			});	
+			var values = keyValues.map(function(d){return new Date(d.key)});
+			var diffs = diff(values);
+			
+			if(length<3){
+				timeSeries = false;
+			} else {
+				console.log(diffs);
+				var sd = stddev(diffs);
+				console.log(sd);
+				if(sd<50 || lastValue>2){
+					//filter for latest date from sort
+					filterValue = keyValues[length-1].key;
+					filterCol = match.col;
+					filterHeader = match.header;
+				} else {
+					timeSeries = false;
+				}
+			}
+		});
+		return [timeSeries,filterValue,filterHeader,filterCol];
+
+		function diff(arr){
+			var output = [];
+			for(var i=1;i<arr.length;i++){
+				var oneDay = 24*60*60*1000; // hours*minutes*seconds*milliseconds
+				var firstDate = arr[i];
+				var secondDate = arr[i-1];
+
+				var diff = Math.round(Math.abs((firstDate.getTime() - secondDate.getTime())/(oneDay)));
+				if(!isNaN(diff)){
+					output.push(diff);
+				}			
+			}
+			return output;
+		}
+
+		function stddev(array){
+			n = array.length;
+			mean = array.reduce((a,b) => a+b)/n;
+			s = Math.sqrt(array.map(x => Math.pow(x-mean,2)).reduce((a,b) => a+b)/n);
+			return s;
+		}
+	},
+
 	getTextBites: function(){
 		let self = this;
 		let bites = [];
 		if(this.timeSeries){
-			bites.push({'type':'text','subtype':'intro','priority':10,'bite':'Data filtered for on '+this.timeSeriesFilterHeader+' for '+this.timeSeriesFilter, 'id':'text0000'});
+			bites.push({'type':'text','subtype':'intro','priority':10,'bite':'Data filtered on '+this.timeSeriesFilterHeader+' for '+this.timeSeriesFilter, 'id':'text0000'});
 		}
 		this._textBites.forEach(function(bite,i){
 			let distinctOptions = {};
@@ -59,10 +137,16 @@ let hxlBites = {
 			});
 			let matchingValues = self._checkCriteria(bite.criteria,distinctOptions);
 			if(matchingValues !== false){
+				let uniqueIDs = []
+				bite.ingredients.forEach(function(ingredient){
+					matchingValues[ingredient.name].forEach(function(match){
+						uniqueIDs.push(bite.id+'/'+match.tag+'/'+match.col);
+					})
+				});
 				let variables = self._getVariables(bite,matchingValues);
 				let newBites = self._generateTextBite(bite.phrase,variables);
 				newBites.forEach(function(newBite,i){
-					bites.push({'type':'text','subtype':bite.subType,'priority':bite.priority,'bite':newBite, 'id':bite.id});
+					bites.push({'type':'text','subtype':bite.subType,'priority':bite.priority,'bite':newBite, 'id':uniqueIDs[i]});
 				});
 				
 			}
@@ -137,6 +221,55 @@ let hxlBites = {
 		return bites;
 	},
 
+	getTimeSeriesBites: function(){
+
+		let self = this;
+		let bites = [];
+
+		if(!self.timeSeries){
+			return [];
+		}
+
+		// through all timeSeriesBites and check criteria
+		this._timeSeriesBites.forEach(function(bite,i){
+
+			//get unique values for each ingredient for checking against bite criteria
+			let distinctOptions = {};
+			bite.ingredients.forEach(function(ingredient){
+				distinctValues = self._getIngredientValues(ingredient,self._fullData);
+				distinctOptions[ingredient.name] = distinctValues;
+			});
+
+			//return just the ingredients that match the criteria of the bite
+			let matchingValues = self._checkCriteria(bite.criteria,distinctOptions);
+
+			//skip if no values match
+			if(matchingValues !== false){
+
+				//get all the combinations of matching values with their data table
+				let variables = self._getTableVariablesWithMatching(self._fullData,bite,matchingValues);
+				//turning date strings into date objects
+
+				variables = self._formatTimeSeriesVariables(variables);
+				//construct bite from chart bite
+				let newBites = self._generateChartBite(bite.chart,variables);
+				newBites.forEach(function(newBite,i){
+
+					//sort by date
+					let headers = newBite.bite.slice(0, 1);
+					data = newBite.bite.slice(1,newBite.bite.length);
+					data = data.sort(function(a,b){
+						return a[0] - b[0];
+					});
+					newBite.bite = headers.concat(data);
+					bites.push({'type':'chart','subtype':bite.subType,'priority':bite.priority,'bite':newBite.bite, 'id':bite.id, 'uniqueID':newBite.uniqueID, 'title':newBite.title});
+				});		
+			}
+
+		});
+		return bites;
+	},
+
 	getMapBites: function(){
 		let self = this;
 		let bites = [];
@@ -148,39 +281,25 @@ let hxlBites = {
 			});
 			let matchingValues = self._checkCriteria(bite.criteria,distinctOptions);
 			if(matchingValues !== false){
-				let tag = matchingValues.where[0].tag;
-				let location = null;
-				let level = -1;
-				if(tag=='#country+code'){
-					level = 0;
-				}
-				if(tag=='#adm1+code'){
-					level = 1;
-				}
-				if(tag=='#adm2+code'){
-					level = 2;
-				}
-				if(tag=='#adm3+code'){
-					level = 3;
-				}							
-				if(level>-1){
-					//let titleVariables = self._getTitleVariables(bite.variables,matchingValues);				
-					//let titles = self._generateTextBite(bite.title,titleVariables);
-					let keyVariable = bite.variables[0]
-					let values = matchingValues[keyVariable][0].values;
-					let mapCheck = self._checkMapCodes(level,values);
-					console.log(mapCheck);
-					if(mapCheck.percent>0.5){
 						let variables = self._getTableVariablesWithMatching(self._data,bite,matchingValues);
-						let newBites = self._generateMapBite(bite.map,variables,location,level);
+						let newBites = self._generateMapBite(bite.map,variables);
 						newBites.forEach(function(newBite,i){
-							bites.push({'type':'map','subtype':bite.subType,'title': newBite.title,'priority':bite.priority,'bite':newBite.bite, 'uniqueID':newBite.uniqueID, 'id':bite.id, 'geom_url':mapCheck.url,'geom_attribute':mapCheck.code});
+							bites.push({'type':'map','subtype':bite.subType,'title': newBite.title,'priority':bite.priority,'bite':newBite.bite, 'uniqueID':newBite.uniqueID, 'id':bite.id, 'geom_url':newBite.geom_url,'geom_attribute':newBite.geom_attribute,'name_attribute':newBite.name_attribute});
 						});
-					}
-				}
 			}		
 		});
 		return bites;
+	},
+
+	_formatTimeSeriesVariables: function(variables){
+		variables.forEach(function(variable,j){
+			variable.table[0].forEach(function(d,i){
+				if(i>0){
+					variables[j].table[0][i] = new Date(d);
+				}
+			});
+		});
+		return variables;
 	},
 
 	_getTitleVariables: function(variables,matchingValues){
@@ -467,7 +586,7 @@ let hxlBites = {
 		return {'table':table,'uniqueID':bite.id+'/'+keyMatch1.tag+'/'+keyMatch1.col+'/'+keyMatch2.tag+'/'+keyMatch2.col};
 	},
 
-	_filterData(data,col,value){
+	_filterData: function(data,col,value){
 		let filterData = data.filter(function(d,index){
 			if(d[col]==value){
 				return true;
@@ -481,7 +600,6 @@ let hxlBites = {
 	_getVariables: function(bite,matchingValues){
 
 		let self = this;
-		
 		variableList = [];
 		bite.variables.forEach(function(variable){
 			let func = variable.split('(')[0];
@@ -517,7 +635,10 @@ let hxlBites = {
 				}
 				if(func == 'secondCount'){
 					items.push(self._varFuncSortPositionCount(match,1));
-				}				
+				}
+				if(func == 'sum'){
+					items.push(self._varFuncSum(match));
+				}									
 			});
 			variableList.push(items);
 		});
@@ -525,29 +646,93 @@ let hxlBites = {
 	},
 
 	_checkMapCodes: function(level,values){
-		let maxMatch = 0;
-		let maxURL = '';
-		let maxName = '';
-		let maxCode = '';
-		hxlBites._mapValues.forEach(function(geomMeta){
-			geomMeta.codes.forEach(function(code){
-				let match = 0;
-				values.forEach(function(value,i){
-					if(code.values.indexOf(value)>-1){
-						match++;
+
+
+		worldgeos = hxlBites._mapValues.world;
+		codCodes = hxlBites._mapValues.cod;
+
+		/*var urlPattern = "https://gistmaps.itos.uga.edu/arcgis/rest/services/COD_External/{{country}}_pcode/MapServer/{{level}}/query?where=1%3D1&outFields=*&f=geojson";
+        var url = urlPattern.replace("{{country}}", countryCode.toUpperCase());
+        url = url.replace("{{level}}", levelId);*/
+		if(level==0){
+			let maxMatch = 0;
+			let maxURL = '';
+			let maxName = '';
+			let maxCode = '';
+			worldgeos.forEach(function(geomMeta){
+				geomMeta.codes.forEach(function(code){
+					let match = 0;
+					values.forEach(function(value,i){
+						if(code.values.indexOf(value)>-1){
+							match++;
+						}
+					});
+					if(match>maxMatch){
+						maxMatch=match;
+						maxURL = geomMeta.url;
+						maxName = geomMeta.name;
+						maxCode = code.name;
 					}
 				});
-				if(match>maxMatch){
-					maxMatch=match;
-					maxURL = geomMeta.url;
-					maxName = geomMeta.name;
-					maxCode = code.name;
-				}
 			});
-		});
-		let matchPercent = maxMatch/values.length;
-		let unmatched = values.length - maxMatch;
-		return {'unmatched':unmatched,'percent':matchPercent,'code':maxCode,'name':maxName,'url':maxURL};
+			//let matchPercent = maxMatch/values.length;
+			//let unmatched = values.length - maxMatch;
+			return {'code':[maxCode],'name':maxName,'url':[maxURL],'clean':[],'name_att':['NAME']};
+		}
+		if(level>0){
+			let iso3Codes = [];
+			let pcodeClean = [];
+			let parsed = [];
+			var url = '';
+			var adjustment = '';
+			values.forEach(function(d){
+				let iso3 = isNaN(d.substring(2,3));
+				if(iso3){
+					countryCode = d.substring(0,3);
+				} else {
+					countryCode = d.substring(0,2);
+				}
+				if(parsed.indexOf(countryCode)==-1){
+					parsed.push(countryCode);
+					if(iso3){
+						codCodes.forEach(function(code){
+							if(code.iso3==countryCode){
+								iso3Codes.push(code);
+								if(code.iso3!=code.use){
+									pcodeClean.push([code.iso3,code.use]);
+								}
+							}
+						});
+					} else {
+						codCodes.forEach(function(code){
+							if(code.iso2==countryCode){
+								iso3Codes.push(code);
+								if(code.iso2!=code.use){
+									pcodeClean.push([code.iso2,code.use]);
+								}
+							}
+						});						
+					}
+				}
+			})
+			let urls = [];
+			let codes = [];
+			let name_atts = [];
+			let urlPattern = "https://gistmaps.itos.uga.edu/arcgis/rest/services/COD_External/{{country}}_pcode/MapServer/{{level}}/query?where=1%3D1&outFields=*&f=geojson";
+			iso3Codes.forEach(function(d){
+		        var url = d.url.replace(/{{country}}/g, d.iso3.toUpperCase());
+		        url = url.replace("{{level}}", level+d.adjustment);
+		        urls.push(url);
+		        var code = d.code_att.replace("{{level}}", level);
+		        var name_att = d.name_att.replace("{{level}}", level);
+		        codes.push(code);
+		        name_atts.push(name_att);
+			});
+			//admin code to go in here
+			return {'code':codes,'name':'cod','url':urls,'clean':pcodeClean,'name_att':name_atts};			
+		}
+		return false
+
 	},
 
 	//change later to form every iteration
@@ -646,15 +831,37 @@ let hxlBites = {
 		return bites
 	},
 
-
-	//use better way to get tags that does not grab first tag.
-	_generateMapBite: function(map,variables,location,level){
+	_generateMapBite: function(map,variables){
 		let self = this;
 		let bites = [];
 		variables.forEach(function(v){
 			let mapData = self._transposeTable(v.table);
-			let bite = {'bite':mapData,'uniqueID':v.uniqueID,'title':v.title};
-			bites.push(bite);
+			let tag = v.uniqueID.split('/')[1];
+			let location = null;
+			let level = -1;
+			if(tag=='#country+code'){
+				level = 0;
+			}
+			if(tag=='#adm1+code'){
+				level = 1;
+			}
+			if(tag=='#adm2+code'){
+				level = 2;
+			}
+			if(tag=='#adm3+code'){
+				level = 3;
+			}							
+			if(level>-1){
+				values = v.table[0].slice(1, v.table[0].length);
+				let mapCheck = self._checkMapCodes(level,values);
+				mapCheck.clean.forEach(function(c){
+					mapData.forEach(function(d){
+						d[0] = d[0].replace(c[0],c[1]);
+					});
+				});
+				let bite = {'bite':mapData,'uniqueID':v.uniqueID,'title':v.title,'geom_attribute':mapCheck.code,'geom_url':mapCheck.url,'name_attribute':mapCheck.name_att};
+				bites.push(bite);
+			}
 		});
 		return bites;
 	},
@@ -676,6 +883,11 @@ let hxlBites = {
 	_varFuncCount: function(match){
 		return '<span class="hbvalue">'+match.uniqueValues.length+'</span>';
 	},
+
+	_varFuncSum: function(match){
+		var sum = match.values.reduce((a, b) => a + (isNaN(Number(b)) ? 0 : Number(b)), 0);
+		return '<span class="hbvalue">'+sum+'</span>';
+	},	
 
 	_varFuncSingle: function(match){
 		return '<span class="hbvalue">'+match.uniqueValues[0]+'</span>';
@@ -746,37 +958,65 @@ let hxlBites = {
 
 		var self = this;
 
+		var data = self._data;
+
+		//split bite ID into it constituent parts
 		var parts = id.split('/');
+		//bite ID is first part
 		var biteID = parts[0]
+
+		//if bite is a timeseries then reference the full data rather than data filtered to the latest data
+		if (biteID.substr(0,4)=='time'){
+			data = self._fullData;
+		}
+
+		//column data in two parts in the unique bite ID.  The original tag and column number
 		var columns = [];
 		var length = (parts.length-1)/2
 		for(i=0;i<length;i++){
 			columns.push({'tag':parts[i*2+1],'number':+parts[i*2+2]})
-		}	
+		}
+		//for each column confirm if tag is present	
 		columns.forEach(function(col,i){
 			columns[i]=self.confirmCols(col);
-			columns[i].values = self.getValues(self._data,col);
+			columns[i].values = self.getValues(data,col);
 			columns[i].uniqueValues = self.getDistinct(columns[i].values);
 		});
-		var bite = this.getBite(biteID)
+		var bite = this.getBite(biteID);
 		var matchingValues = this.createMatchingValues(bite,columns);
 		var bites = [];
 		newBites = [];
-		let variables = self._getTableVariablesWithMatching(self._data,bite,matchingValues);
-		if(bite.type=='chart'){
-			newBites = self._generateChartBite(bite.chart,variables);
+		let uniqueID = '';
+		let variables = '';
+		if(bite.type!='text'){
+			variables = self._getTableVariablesWithMatching(data,bite,matchingValues);
+		} else {
+			bite.ingredients.forEach(function(ingredient){
+				matchingValues[ingredient.name].forEach(function(match){
+					uniqueID = bite.id+'/'+match.tag+'/'+match.col;
+				})
+			});
+			let variables = self._getVariables(bite,matchingValues);
+			newBites = [{'bite':self._generateTextBite(bite.phrase,variables)[0]}];
+			newBites[0].uniqueID = uniqueID;
 		}
+		if(bite.type=='chart'){
+			if (biteID.substr(0,4)=='time'){
+				variables = self._formatTimeSeriesVariables(variables);
+			}
+			newBites = self._generateChartBite(bite.chart,variables);
+		}		
 		if(bite.type=='table'){
 			newBites = self._generateTableBite(bite.table,variables);
 		}
 		if(bite.type=='crosstable'){
-			let variables = self._getCrossTableVariables(self._data,bite,matchingValues);
+			let variables = self._getCrossTableVariables(data,bite,matchingValues);
 			newBites = [self._generateCrossTableBite(bite.table,variables)];
 			newBites[0].title = 'Crosstable';
 		}
 		var mapCheck;						
 		if(bite.type=='map'){
-			let tag = bite.ingredients[0].tags[0];
+			let tag = columns[0].tag;
 			let location = null;
 			let level = -1;
 			if(tag=='#country+code'){
@@ -785,22 +1025,40 @@ let hxlBites = {
 			if(tag=='#adm1+code'){
 				level = 1;
 			}
+			if(tag=='#adm2+code'){
+				level = 2;
+			}
+			if(tag=='#adm3+code'){
+				level = 3;
+			}	
 			if(level>-1){
 				//let titleVariables = self._getTitleVariables(bite.variables,matchingValues);				
 				//let titles = self._generateTextBite(bite.title,titleVariables);
 				let keyVariable = bite.variables[0]
 				let values = matchingValues[keyVariable][0].values;
-				mapCheck = self._checkMapCodes(level,values);
-				if(mapCheck.percent>0.5){			
-					newBites = self._generateMapBite(bite.chart,variables);
-				}
+				//mapCheck = self._checkMapCodes(level,values);
+				/*mapCheck.clean.forEach(function(c){
+					mapData.forEach(function(d){
+						d[0] = d[0].replace(c[0],c[1]);
+					});
+				});	*/	
+				newBites = self._generateMapBite(bite.chart,variables);
 			}
-		}		
+		}
 		newBites.forEach(function(newBite,i){
+			if (biteID.substr(0,4)=='time'){
+				let headers = newBite.bite.slice(0, 1);
+				data = newBite.bite.slice(1,newBite.bite.length);
+				data = data.sort(function(a,b){
+					return a[0] - b[0];
+				});
+				newBite.bite = headers.concat(data);
+			}
 			bites.push({'type':bite.type,'subtype':bite.subType,'priority':bite.priority,'bite':newBite.bite, 'id':bite.id, 'uniqueID':newBite.uniqueID, 'title':newBite.title});
 			if(bite.type=='map'){
-				bites[i].geom_url=mapCheck.url;
-				bites[i].geom_attribute=mapCheck.code;
+				bites[i].geom_url=newBite.geom_url;
+				bites[i].geom_attribute=newBite.geom_attribute;
+				bites[i].name_attribute=newBite.name_attribute;
 			}
 		});
 		return bites[0];
@@ -810,6 +1068,11 @@ let hxlBites = {
 	getBite: function(id){
 		var bite = {};
 		hxlBites._chartBites.forEach(function(b){
+			if(b.id==id){
+				bite = b;
+			}
+		});
+		hxlBites._timeSeriesBites.forEach(function(b){
 			if(b.id==id){
 				bite = b;
 			}
@@ -828,7 +1091,12 @@ let hxlBites = {
 			if(b.id==id){
 				bite = b;
 			}
-		});								
+		});
+		hxlBites._textBites.forEach(function(b){
+			if(b.id==id){
+				bite = b;
+			}
+		});										
 		return bite;
 	},
 
@@ -850,7 +1118,8 @@ let hxlBites = {
 			matchingValues[ingredient.name] = [];
 		});
 		cols.forEach(function(col){
-			//only match tags not attributes - improve in future - probably works 99% of the time
+			//applies the column to the correct ingredient that contains the tag to create matching values
+			//might be a problem if both ingredients use the same tag.
 			bite.ingredients.forEach(function(ingredient){
 				ingredient.tags.forEach(function(tag){
 					var formatTag = tag.replace('-','+').split('+')[0];
